@@ -22,7 +22,7 @@ def chess_notation_2_complex_number(notation):
 
 
 def complex_number_2_chess_notation(complex_number):
-    return numbers_2_notes[int(complex_number.real - 1)] + str(int(complex_number.imag))
+    return numbers_2_notes[int(complex_number.real - 1)] + str(int(complex_number.imag)) if complex_number.imag != 0 else numbers_2_notes[int(complex_number.real - 1)]
 
 
 if __name__ == "__main__":

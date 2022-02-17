@@ -1,60 +1,53 @@
 from Chesspiece import Rook, Queen, Knight, King, Pawn, Bishop
-
-horizontal = {"a", "b", "c", "d", "e", "f", "g", "h"}
-vertical = ["1", "2", "3", "4", "5", "6", "7", "8"]
-
+from utilities import complex_number_2_chess_notation
 
 
 class Chess:
     def __init__(self):
         self.chess_board = {
-            k + v: None for k in horizontal for v in vertical
+            complex(k, v): None for k in range(1, 9) for v in range(1, 9)
         }
+        for i in range(1, 9):
+            self.chess_board[complex(i, 2)] = Pawn(True)
+            self.chess_board[complex(i, 7)] = Pawn(False)
 
-        for i in horizontal:
-            self.chess_board[i + "2"] = Pawn(True, i + "2")
-            self.chess_board[i + "7"] = Pawn(False, i + "7")
+        self.chess_board[1 + 1j] = Rook(True)
+        self.chess_board[2 + 1j] = Knight(True)
+        self.chess_board[3 + 1j] = Bishop(True)
+        self.chess_board[4 + 1j] = Queen(True)
+        self.chess_board[5 + 1j] = King(True)
+        self.chess_board[6 + 1j] = Bishop(True)
+        self.chess_board[7 + 1j] = Knight(True)
+        self.chess_board[8 + 1j] = Rook(True)
 
-        self.chess_board['a1'] = Rook(True, 'a1')
-        self.chess_board['b1'] = Knight(True, 'b1')
-        self.chess_board['c1'] = Bishop(True, 'c1')
-        self.chess_board['d1'] = Queen(True, 'd1')
-        self.chess_board['e1'] = King(True, 'e1')
-        self.chess_board['f1'] = Bishop(True, 'f1')
-        self.chess_board['g1'] = Knight(True, 'g1')
-        self.chess_board['h1'] = Rook(True, 'h1')
-
-        self.chess_board['a8'] = Rook(False, 'a8')
-        self.chess_board['b8'] = Knight(False, 'b8')
-        self.chess_board['c8'] = Bishop(False, 'c8')
-        self.chess_board['d8'] = Queen(False, 'd8')
-        self.chess_board['e8'] = King(False, 'e8')
-        self.chess_board['f8'] = Bishop(False, 'f8')
-        self.chess_board['g8'] = Knight(False, 'g8')
-        self.chess_board['h8'] = Rook(False, 'h8')
-
+        self.chess_board[1 + 8j] = Rook(False)
+        self.chess_board[2 + 8j] = Knight(False)
+        self.chess_board[3 + 8j] = Bishop(False)
+        self.chess_board[4 + 8j] = Queen(False)
+        self.chess_board[5 + 8j] = King(False)
+        self.chess_board[6 + 8j] = Bishop(False)
+        self.chess_board[7 + 8j] = Knight(False)
+        self.chess_board[8 + 8j] = Rook(False)
 
     def restart(self):
         self.__init__()
 
-
     def render_chessboard(self):
         print('  ', end=" ")
-        for k in sorted(list(horizontal)):
-            print(k + "", end=" ")
+        for k in range(1, 9):
+            print(complex_number_2_chess_notation(complex(k, 0)) + "", end=" ")
         print(" ")
-        for i in sorted(list(vertical))[::-1]:
+        for i in range(8, 0, -1):
             print(i, end="  ")
-            for k in sorted(list(horizontal)):
-                if self.chess_board[k+i]:
-                    print(self.chess_board[k + i], end=" ")
+            for k in range(1, 9):
+                if self.chess_board[complex(k, i)]:
+                    print(self.chess_board[complex(k, i)], end=" ")
                 else:
                     print(".", end=" ")
-            print(" " + i)
+            print(" " + str(i))
         print('  ', end=" ")
-        for k in sorted(list(horizontal)):
-            print(k + "", end=" ")
-
+        for k in range(1, 9):
+            print(complex_number_2_chess_notation(complex(k, 0)), end=" ")
 
 
 if __name__ == "__main__":
