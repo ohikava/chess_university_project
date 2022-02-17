@@ -1,8 +1,7 @@
 from Chesspiece import Rook, Queen, Knight, King, Pawn, Bishop
-from utilities import complex_number_2_chess_notation
 
 
-class Chess:
+class Chessboard:
     def __init__(self):
         self.chess_board = {
             complex(k, v): None for k in range(1, 9) for v in range(1, 9)
@@ -29,27 +28,30 @@ class Chess:
         self.chess_board[7 + 8j] = Knight(False)
         self.chess_board[8 + 8j] = Rook(False)
 
+        self.current_move = 1
+        self.queue = True
+
     def restart(self):
         self.__init__()
 
-    def render_chessboard(self):
-        print('  ', end=" ")
-        for k in range(1, 9):
-            print(complex_number_2_chess_notation(complex(k, 0)) + "", end=" ")
-        print(" ")
-        for i in range(8, 0, -1):
-            print(i, end="  ")
-            for k in range(1, 9):
-                if self.chess_board[complex(k, i)]:
-                    print(self.chess_board[complex(k, i)], end=" ")
-                else:
-                    print(".", end=" ")
-            print(" " + str(i))
-        print('  ', end=" ")
-        for k in range(1, 9):
-            print(complex_number_2_chess_notation(complex(k, 0)), end=" ")
+    def move(self, old_position, new_position):
+        chesspiece = self.chess_board[old_position]
 
+        if not chesspiece:
+            return False, 'Вы не можете пойти пустой клеткой'
+
+        if self.queue != chesspiece.fraction:
+            return False, 'Вы не можете пойти чужой фигурой'
+
+        if not (figure_move := chesspiece.move_to(old_position, new_position)[0]):
+            return False, figure_move[1]
+
+        self.chess_board[new_position] = chesspiece
+        self.chess_board[old_position] = None
+        self.current_move += 1
+        self.queue = not self.queue
+
+        return True, 'Ход завершен'
 
 if __name__ == "__main__":
-    cb = Chess()
-    cb.render_chessboard()
+    cb = Chessboard()
