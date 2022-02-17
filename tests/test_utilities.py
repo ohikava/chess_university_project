@@ -16,7 +16,6 @@ def test3():
 def test4():
     assert 'h5' == complex_number_2_chess_notation(8 + 5j)
 
-
 def test5():
     assert 'a1' == complex_number_2_chess_notation(1 + 1j)
 
