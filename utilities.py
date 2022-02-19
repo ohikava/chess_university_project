@@ -1,3 +1,5 @@
+from math import copysign
+
 notes_2_number = {
     "a": 1,
     "b": 2,
@@ -22,7 +24,13 @@ def chess_notation_2_complex_number(notation):
 
 
 def complex_number_2_chess_notation(complex_number):
-    return numbers_2_notes[int(complex_number.real - 1)] + str(int(complex_number.imag)) if complex_number.imag != 0 else numbers_2_notes[int(complex_number.real - 1)]
+    return numbers_2_notes[int(complex_number.real - 1)] + str(
+        int(complex_number.imag)) if complex_number.imag != 0 else numbers_2_notes[int(complex_number.real - 1)]
+
+
+def sign(x):
+    return copysign(1, x) if x > 10**(-3)  or x < -10 ** (-3) else 0
+
 
 if __name__ == "__main__":
     print(chess_notation_2_complex_number('h2'))

@@ -97,3 +97,23 @@ def test_22():
 
 def test_23():
     assert black_p.move_to(2 + 7j, 2 + 6j)[2] == [2 + 6j]
+
+def test_24():
+    assert white_k.move_to(2 + 3j, 1+3j)[2] == [1 + 3j]
+
+def test_25():
+    assert white_k.move_to(2 + 3j, 3 + 2j)[2] == [3 + 2j]
+
+def test_26():
+    assert white_q.move_to(1 + 1j, 6 + 6j)[2] == [2 + 2j, 3 + 3j, 4 + 4j, 5+ 5j, 6 + 6j]
+
+def test_27():
+    assert white_q.move_to(1 + 1j, 5 + 1j)[2] == [2 + 1j, 3 + 1j, 4 + 1j, 5 + 1j]
+
+def test_28():
+    assert white_q.move_to(3 + 5j,  6 + 2j)[2] == [4 + 4j, 5 + 3j, 6 + 2j]
+
+def test_29():
+    assert white_b.move_to(3 + 5j,  1 + 7j)[2] == [2 + 6j, 1 + 7j]
+
+
