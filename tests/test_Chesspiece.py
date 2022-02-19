@@ -79,3 +79,21 @@ def test_16():
 
 def test_17():
     assert white_n.move_to(2 + 1j, 1 + 3j)[0]
+
+def test_18():
+    assert white_b.move_to(3 + 3j, 8 + 8j)[2] == [4 + 4j, 5 + 5j, 6 + 6j, 7 + 7j, 8 + 8j]
+
+def test_19():
+    assert white_b.move_to(3 + 3j, 1 + 1j)[2] == [2 + 2j, 1 + 1j]
+
+def test_20():
+    assert white_b.move_to(3 + 3j, 1 + 5j)[2] == [2 + 4j, 1 + 5j]
+
+def test_21():
+    assert white_b.move_to(3 + 3j, 5 + 1j)[2] == [4 + 2j, 5 + 1j]
+
+def test_22():
+    assert white_p.move_to(2 + 2j, 2 + 4j)[2] == [2 + 3j, 2 + 4j]
+
+def test_23():
+    assert black_p.move_to(2 + 7j, 2 + 6j)[2] == [2 + 6j]

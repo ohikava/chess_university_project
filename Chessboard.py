@@ -43,7 +43,9 @@ class Chessboard:
         if self.queue != chesspiece.fraction:
             return False, 'Вы не можете пойти чужой фигурой'
 
-        if not (figure_move := chesspiece.move_to(old_position, new_position)[0]):
+        # TODO move_to should return possible steps for reaching a new position, so i can check the
+        #  availability of move
+        if not (figure_move := chesspiece.move_to(old_position, new_position, self.current_move)[0]):
             return False, figure_move[1]
 
         self.chess_board[new_position] = chesspiece
