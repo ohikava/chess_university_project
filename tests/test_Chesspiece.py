@@ -117,26 +117,26 @@ def test_29():
     assert white_b.move_to(3 + 5j,  1 + 7j)[2] == [2 + 6j, 1 + 7j]
 
 def test_30():
-    assert white_n.move_to(3 + 3j, 4 + 5j)[2] == [3 + 4j, 3 + 5j, 4 + 5j]
+    assert white_n.get_trajectory(3 + 3j, 4 + 5j) == [3 + 4j, 3 + 5j, 4 + 5j]
 
 def test_31():
-    assert white_n.move_to(4 + 4j, 6 + 3j)[2] == [5 + 4j, 6 + 4j, 6 + 3j]
+    assert white_n.get_trajectory(4 + 4j, 6 + 3j) == [5 + 4j, 6 + 4j, 6 + 3j]
 
 def test_32():
-    assert white_n.move_to(4 + 4j, 6 + 5j)[2] == [5 + 4j, 6 + 4j, 6 + 5j]
+    assert white_n.get_trajectory(4 + 4j, 6 + 5j) == [5 + 4j, 6 + 4j, 6 + 5j]
 
 def test_33():
-    assert white_n.move_to(4 + 4j, 5 + 2j)[2] == [4 + 3j, 4 + 2j, 5 + 2j]
+    assert white_n.get_trajectory(4 + 4j, 5 + 2j) == [4 + 3j, 4 + 2j, 5 + 2j]
 
 def test_34():
-    assert white_n.move_to(4 + 4j, 3 + 2j)[2] == [4 + 3j, 4 + 2j, 3 + 2j]
+    assert white_n.get_trajectory(4 + 4j, 3 + 2j) == [4 + 3j, 4 + 2j, 3 + 2j]
 
 def test_35():
-    assert white_n.move_to(4 + 4j, 2 + 3j)[2] == [3  + 4j, 2 + 4j, 2 + 3j]
+    assert white_n.get_trajectory(4 + 4j, 2 + 3j) == [3  + 4j, 2 + 4j, 2 + 3j]
 
 def test_36():
-    assert white_n.move_to(4 + 4j, 2 + 5j)[2] == [3 + 4j, 2 + 4j, 2 + 5j]
+    assert white_n.get_trajectory(4 + 4j, 2 + 5j) == [3 + 4j, 2 + 4j, 2 + 5j]
 
 def test_37():
-    assert white_n.move_to(4 + 4j, 3 + 6j)[2] == [4 + 5j, 4 + 6j, 3 + 6j]
+    assert white_n.get_trajectory(4 + 4j, 3 + 6j) == [4 + 5j, 4 + 6j, 3 + 6j]
 

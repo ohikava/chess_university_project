@@ -31,6 +31,12 @@ class Chessboard:
         self.current_move = 1
         self.queue = True
 
+    # TODO method that checks is it possible to do a move without putting a king under a treat
+    def check_is_king_in_safe(self, position, new_position) -> bool:
+        enemy_units = {i:v for (i, v) in self.chess_board.items() if v != None and v.fraction != self.queue}
+        print(enemy_units)
+        pass
+
     def restart(self):
         self.__init__()
 
@@ -43,10 +49,12 @@ class Chessboard:
         if self.queue != chesspiece.fraction:
             return False, 'Вы не можете пойти чужой фигурой'
 
-        # TODO move_to should return possible steps for reaching a new position, so i can check the
-        #  availability of move
-        if not (figure_move := chesspiece.move_to(old_position, new_position, self.current_move)[0]):
+        if not (figure_move := chesspiece.move_to(old_position, new_position, self.current_move))[0]:
             return False, figure_move[1]
+
+        for i in figure_move[2]:
+            if self.chess_board[i]:
+                return False, "Вы не можете пойти сквозь фигуру"
 
         self.chess_board[new_position] = chesspiece
         self.chess_board[old_position] = None
@@ -57,3 +65,6 @@ class Chessboard:
 
 if __name__ == "__main__":
     cb = Chessboard()
+    cb.check_is_king_in_safe(1 + 1j, 1 + 2j)
+    cb.move(1 + 2j, 1 + 3j)
+    cb.check_is_king_in_safe(1 + 2j, 2 + 3j)

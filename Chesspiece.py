@@ -73,27 +73,34 @@ class Knight(Chesspiece):
     def __init__(self, fraction):
         super().__init__('n', fraction)
 
+    def get_trajectory(self, position, new_position) -> list:
+        position_differenece = new_position - position
+        angle = int(phase(position_differenece) * 180/pi)
+
+        trajectory = []
+
+        if angle in {26, -26, 153, -153}:
+            i = position
+            while i.real != new_position.real:
+                i += sign(cos(angle))
+                trajectory.append(i)
+            trajectory.append(complex(i.real, i.imag + sign(sin(angle))))
+        else:
+            i = position
+            while i.imag != new_position.imag:
+                i += complex(0, sign(sin(angle)))
+                trajectory.append(i)
+            trajectory.append(complex(i.real + sign(cos(angle)), i.imag))
+
+        return trajectory
+
     def move_to(self, position, new_position, move=1) -> (bool, str, list):
         position_difference = new_position - position
 
         if (angle := int(phase(position_difference) * 180/pi)) in {63, 26, -26, -63, -116, 116, 153, -153} \
                 and sqrt(5) == abs(position_difference):
 
-            trajectory = []
-
-            if angle in {26, -26, 153, -153}:
-                i = position
-                while i.real != new_position.real:
-                    i += sign(cos(angle))
-                    trajectory.append(i)
-                trajectory.append(complex(i.real, i.imag + sign(sin(angle))))
-            else:
-                i = position
-                while i.imag != new_position.imag:
-                    i += complex(0, sign(sin(angle)))
-                    trajectory.append(i)
-                trajectory.append(complex(i.real + sign(cos(angle)), i.imag))
-
+            trajectory = [new_position,]
             return True, "", trajectory
 
         return False, "Данная фигура не может пойти в эту клетку", []
