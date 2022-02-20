@@ -73,16 +73,30 @@ class Knight(Chesspiece):
     def __init__(self, fraction):
         super().__init__('n', fraction)
 
-    def move_to(self, position, new_position, move=1):
+    def move_to(self, position, new_position, move=1) -> (bool, str, list):
         position_difference = new_position - position
 
-        print(f'phase of knigh is {phase(position_difference) * 180/pi}, abs is {abs(position_difference)}')
-
-        if int(phase(position_difference) * 180/pi) in {63, 26, -26, -63, -116, 116, 153, -153} \
+        if (angle := int(phase(position_difference) * 180/pi)) in {63, 26, -26, -63, -116, 116, 153, -153} \
                 and sqrt(5) == abs(position_difference):
-            return True, ""
 
-        return False, "Данная фигура не может пойти в эту клетку"
+            trajectory = []
+
+            if angle in {26, -26, 153, -153}:
+                i = position
+                while i.real != new_position.real:
+                    i += sign(cos(angle))
+                    trajectory.append(i)
+                trajectory.append(complex(i.real, i.imag + sign(sin(angle))))
+            else:
+                i = position
+                while i.imag != new_position.imag:
+                    i += complex(0, sign(sin(angle)))
+                    trajectory.append(i)
+                trajectory.append(complex(i.real + sign(cos(angle)), i.imag))
+
+            return True, "", trajectory
+
+        return False, "Данная фигура не может пойти в эту клетку", []
 
     def attack(self, position, goal):
         self.move_to(position, goal)
@@ -150,8 +164,12 @@ class King(Chesspiece):
 if __name__ == "__main__":
     # b = Bishop(True)
     # print(b.move_to(2 + 2j, 5 + 5j))
-    r = Rook(True)
-    print(r.move_to(1 + 1j, 1 + 7j))
-    print(r.move_to(1 + 1j, 7 + 1j))
-    q = Queen(True)
-    print(q.move_to(2 + 5j, 1 + 4j))
+    r = Knight(True)
+    print(r.move_to(4 + 4j, 5 + 6j))
+    print(r.move_to(4 + 4j, 6 + 5j))
+    print(r.move_to(4 + 4j, 6 + 3j))
+    print(r.move_to(4 + 4j, 5 + 2j))
+    print(r.move_to(4 + 4j, 3 + 2j))
+    print(r.move_to(4 + 4j, 2 + 3j))
+    print(r.move_to(4 + 4j, 2 + 5j))
+    print(r.move_to(4 + 4j, 3 + 6j))
