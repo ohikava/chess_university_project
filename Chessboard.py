@@ -40,7 +40,7 @@ class Chessboard:
     def restart(self):
         self.__init__()
 
-    def move(self, old_position, new_position):
+    def move(self, old_position, new_position) -> (bool, str):
         chesspiece = self.chess_board[old_position]
 
         if not chesspiece:
@@ -52,9 +52,17 @@ class Chessboard:
         if not (figure_move := chesspiece.move_to(old_position, new_position, self.current_move))[0]:
             return False, figure_move[1]
 
-        for i in figure_move[2]:
+        for index, i in enumerate(figure_move[2]):
             if self.chess_board[i]:
-                return False, "Вы не можете пойти сквозь фигуру"
+
+                if index != len(figure_move[2]) - 1:
+                    return False, "Вы не можете пойти сквозь фигуру"
+
+                if not chesspiece.attack(old_position, new_position)[0]:
+                    return False, "Вы не можете аттаковать эту клетку"
+
+                if self.chess_board[i].fraction == chesspiece.fraction:
+                    return False, "Вы не можете аттаковать свою же фигуру"
 
         self.chess_board[new_position] = chesspiece
         self.chess_board[old_position] = None
