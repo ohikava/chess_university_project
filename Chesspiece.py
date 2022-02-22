@@ -27,7 +27,7 @@ class Pawn(Chesspiece):
         return trajectory
 
     def move_to(self, position: complex, new_position: complex, move=1) -> (bool, str, list):
-        first_move = True if move == 1 else False
+        first_move = True if move <= 2 else False
         position_difference = new_position - position
 
         trajectory = self.get_trajectory(position, new_position)
@@ -36,23 +36,24 @@ class Pawn(Chesspiece):
                 (abs(position_difference) == 1 or abs(position_difference) == 2 and first_move):
             return True, "", trajectory
 
-        if phase(position_difference) * 180 / pi == -90.0 and not self.fraction and abs(position_difference) == 1:
+        if phase(position_difference) * 180 / pi == -90.0 and not self.fraction and \
+                (abs(position_difference) == 1 or abs(position_difference) == 2 and first_move):
             return True, "", trajectory
 
         return False, "Данная фигура не может пойти в эту клетку", []
 
-    def attack(self, position, goal):
+    def attack(self, position, goal) -> (bool, str, list):
         position_difference = goal - position
 
         if phase(position_difference) * 180 / pi in {45.0, 135.0} and self.fraction and abs(
                 position_difference) == sqrt(2):
-            return True, ''
+            return True, '', [goal,]
 
         if phase(position_difference) * 180 / pi in {-45.0, -135.0} and not self.fraction and abs(
                 position_difference) == sqrt(2):
-            return True, ''
+            return True, '', [goal, ]
 
-        return False, 'Нельзя атаковать эту клетку'
+        return False, 'Нельзя атаковать эту клетку', []
 
     def check_cages(self, position, cage):
         pass
@@ -122,7 +123,7 @@ class Knight(Chesspiece):
         return False, "Данная фигура не может пойти в эту клетку", []
 
     def attack(self, position, goal):
-        self.move_to(position, goal)
+        return self.move_to(position, goal)
 
 
 class Rook(Chesspiece):
@@ -151,7 +152,7 @@ class Rook(Chesspiece):
         return False, "Данная фигура не может пойти в эту клетку", []
 
     def attack(self, position, goal):
-        self.move_to(position, goal)
+        return self.move_to(position, goal)
 
 
 class Queen(Chesspiece):

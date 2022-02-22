@@ -49,7 +49,12 @@ class Chessboard:
         if self.queue != chesspiece.fraction:
             return False, 'Вы не можете пойти чужой фигурой'
 
-        if not (figure_move := chesspiece.move_to(old_position, new_position, self.current_move))[0]:
+        if self.chess_board[new_position]:
+            figure_move = chesspiece.attack(old_position, new_position)
+        else:
+            figure_move = chesspiece.move_to(old_position, new_position, self.current_move)
+
+        if not figure_move[0]:
             return False, figure_move[1]
 
         for index, i in enumerate(figure_move[2]):
@@ -57,9 +62,6 @@ class Chessboard:
 
                 if index != len(figure_move[2]) - 1:
                     return False, "Вы не можете пойти сквозь фигуру"
-
-                if not chesspiece.attack(old_position, new_position)[0]:
-                    return False, "Вы не можете аттаковать эту клетку"
 
                 if self.chess_board[i].fraction == chesspiece.fraction:
                     return False, "Вы не можете аттаковать свою же фигуру"

@@ -30,7 +30,7 @@ def test_5():
 
 
 def test_6():
-    assert not black_p.move_to(2 + 7j, 2 + 5j, True)[0]
+    assert black_p.move_to(2 + 7j, 2 + 5j, True)[0]
 
 
 def test_7():
