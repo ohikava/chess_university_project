@@ -1,6 +1,7 @@
 from cmath import phase
 from math import pi, sqrt, cos, sin
 from utilities import sign
+from typing import Callable
 
 
 class Chesspiece:
@@ -16,7 +17,16 @@ class Pawn(Chesspiece):
     def __init__(self, fraction: bool):
         super().__init__('p', fraction)
 
-    def get_trajectory(self, position, new_position) -> list:
+    def get_probable_attack_trajectory(self, position, is_cage_empty: None) -> set:
+        probable_moves = set()
+        signature = 1 if self.fraction else -1
+        probable_moves.add(complex(position.real - 1, position.imag + signature))
+        probable_moves.add(complex(position.real + 1, position.imag + signature))
+
+        return probable_moves
+
+    @staticmethod
+    def get_trajectory(position, new_position) -> list:
         position_difference = new_position - position
         trajectory = []
         i = position
@@ -47,7 +57,7 @@ class Pawn(Chesspiece):
 
         if phase(position_difference) * 180 / pi in {45.0, 135.0} and self.fraction and abs(
                 position_difference) == sqrt(2):
-            return True, '', [goal,]
+            return True, '', [goal, ]
 
         if phase(position_difference) * 180 / pi in {-45.0, -135.0} and not self.fraction and abs(
                 position_difference) == sqrt(2):
@@ -55,13 +65,22 @@ class Pawn(Chesspiece):
 
         return False, 'Нельзя атаковать эту клетку', []
 
-    def check_cages(self, position, cage):
-        pass
-
 
 class Bishop(Chesspiece):
     def __init__(self, fraction):
         super().__init__('b', fraction)
+
+    def get_probable_attack_trajectory(self, position, is_cage_empty: Callable) -> []:
+        probable_attack_trajectory = []
+        for i in {(1, -1), (-1, 1), (1, 1), (-1, -1)}:
+            iter_position = position
+            for _ in range(1, 9):
+                iter_position += complex(i[0], i[1])
+                if 1 <= iter_position.real <= 8 and 1 <= iter_position.imag <= 8:
+                    probable_attack_trajectory.append(iter_position)
+                if is_cage_empty(iter_position):
+                    break
+        return probable_attack_trajectory
 
     @staticmethod
     def get_trajectory(position, new_position):
@@ -89,6 +108,18 @@ class Bishop(Chesspiece):
 class Knight(Chesspiece):
     def __init__(self, fraction):
         super().__init__('n', fraction)
+
+    @staticmethod
+    def get_probable_attack_trajectory(position, is_cage_free=None):
+        probable_attack_trajectory = set()
+
+        for i in {complex(position.real + 1, position.imag + 2), complex(position.real + 2, position.imag + 1),
+                  complex(position.real + 2, position.imag - 1), complex(position.real + 1, position.imag - 2),
+                  complex(position.real - 1, position.imag - 2), complex(position.real - 2, position.imag - 1),
+                  complex(position.real - 2, position.imag + 1), complex(position.real + 2, position.imag - 1)}:
+            if 1 <= i.real <= 8 and 1 <= i.imag <= 8:
+                probable_attack_trajectory.add(i)
+        return probable_attack_trajectory
 
     @staticmethod
     def get_trajectory(position, new_position) -> list:
@@ -131,6 +162,24 @@ class Rook(Chesspiece):
         super().__init__('r', fraction)
 
     @staticmethod
+    def get_probable_attack_trajectory(position, is_cage_free: Callable) -> set:
+        probable_attack_trajectory = set()
+
+        for i in {(1, 0), (-1, 0), (0, 1), (0, -1)}:
+            iter_position = position
+            for _ in range(1, 9):
+                iter_position += complex(position.real + i[0], position.imag + i[1])
+                if 1 <= iter_position.real <= 8 and 1 <= iter_position.imag <= 8:
+                    probable_attack_trajectory.add(iter_position)
+
+                else:
+                    break
+
+                if is_cage_free(iter_position):
+                    break
+        return probable_attack_trajectory
+
+    @staticmethod
     def get_trajectory(position, new_position):
         position_difference = new_position - position
 
@@ -158,6 +207,22 @@ class Rook(Chesspiece):
 class Queen(Chesspiece):
     def __init__(self, fraction):
         super().__init__('q', fraction)
+
+    @staticmethod
+    def get_probable_attack_trajectory(position, is_cage_free: Callable) -> set:
+        probable_attack_trajectory = set()
+        for i in {(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)}:
+            iter_position = position
+            for _ in range(1, 9):
+                iter_position += complex(position.real + i[0], position.imag + i[1])
+                if 1 <= iter_position.real <= 8 and 1 <= iter_position.imag <= 8:
+                    probable_attack_trajectory.add(iter_position)
+                else:
+                    break
+
+                if is_cage_free(iter_position):
+                    break
+        return probable_attack_trajectory
 
     @staticmethod
     def get_trajectory(position, new_position) -> list:
@@ -189,6 +254,18 @@ class King(Chesspiece):
         super().__init__('k', fraction)
 
     @staticmethod
+    def get_probable_attack_trajectory(position, is_cage_free:Callable) -> set:
+        probable_attack_trajectory = set()
+
+        for i in {(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)}:
+            iter_position = complex(position.real + i[0], position.imag + i[1])
+
+            if 1 <= iter_position.real <= 8 and 1 <= iter_position.imag <= 8:
+                probable_attack_trajectory.add(iter_position)
+
+        return probable_attack_trajectory
+
+    @staticmethod
     def get_trajectory(position, new_position) -> list:
         return [new_position, ]
 
@@ -206,14 +283,5 @@ class King(Chesspiece):
 
 
 if __name__ == "__main__":
-    # b = Bishop(True)
-    # print(b.move_to(2 + 2j, 5 + 5j))
-    r = Knight(True)
-    print(r.move_to(4 + 4j, 5 + 6j))
-    print(r.move_to(4 + 4j, 6 + 5j))
-    print(r.move_to(4 + 4j, 6 + 3j))
-    print(r.move_to(4 + 4j, 5 + 2j))
-    print(r.move_to(4 + 4j, 3 + 2j))
-    print(r.move_to(4 + 4j, 2 + 3j))
-    print(r.move_to(4 + 4j, 2 + 5j))
-    print(r.move_to(4 + 4j, 3 + 6j))
+    b = Bishop(True)
+    print(b.get_probable_attack_trajectory(3 + 3j, lambda x: True if x == 2 + 2j else False))

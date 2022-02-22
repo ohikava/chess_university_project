@@ -9,134 +9,82 @@ white_r = Rook(True)
 white_n = Knight(True)
 
 
-def test_1():
+def test_white_p_moving():
     assert white_p.move_to(2 + 2j, 2 + 3j)[0]
-
-
-def test_2():
     assert white_p.move_to(2 + 2j, 2 + 4j, True)[0]
-
-
-def test_3():
     assert not white_p.move_to(2 + 2j, 2 + 1j)[0]
 
 
-def test_4():
+def test_black_p_moving():
     assert black_p.move_to(2 + 7j, 2 + 6j)[0]
-
-
-def test_5():
     assert black_p.move_to(3 + 6j, 3 + 5j)[0]
-
-
-def test_6():
     assert black_p.move_to(2 + 7j, 2 + 5j, True)[0]
 
 
-def test_7():
+def test_p_attacks():
     assert white_p.attack(4 + 7j, 5 + 8j)[0]
-
-
-def test_8():
     assert black_p.attack(4 + 7j, 5 + 6j)[0]
 
 
-def test_9():
+def test_king_moving():
     assert white_k.move_to(2 + 2j, 2 + 3j)[0]
-
-
-def test_10():
     assert white_k.move_to(2 + 2j, 3 + 3j)[0]
-
-
-def test_11():
     assert white_k.move_to(2 + 2j, 1 + 1j)[0]
-
-
-def test_12():
     assert not white_k.move_to(2 + 2j, 2 + 4j)[0]
 
 
-def test_13():
+def test_queen_moving():
     assert white_q.move_to(1 + 3j, 1 + 7j)[0]
-
-
-def test_14():
     assert white_q.move_to(2 + 5j, 1 + 4j)[0]
 
 
-def test_15():
+def test_bishop_moving():
     assert white_b.move_to(3 + 1j, 6 + 4j)[0]
-
-
-def test_15():
     assert white_b.move_to(4 + 5j, 2 + 3j)[0]
 
 
-def test_16():
+def test_knight_moving():
     assert white_n.move_to(2 + 1j, 3 + 3j)[0]
-
-
-def test_17():
     assert white_n.move_to(2 + 1j, 1 + 3j)[0]
 
-def test_18():
+
+def test_bishop_trajectory():
     assert white_b.move_to(3 + 3j, 8 + 8j)[2] == [4 + 4j, 5 + 5j, 6 + 6j, 7 + 7j, 8 + 8j]
-
-def test_19():
     assert white_b.move_to(3 + 3j, 1 + 1j)[2] == [2 + 2j, 1 + 1j]
-
-def test_20():
     assert white_b.move_to(3 + 3j, 1 + 5j)[2] == [2 + 4j, 1 + 5j]
-
-def test_21():
     assert white_b.move_to(3 + 3j, 5 + 1j)[2] == [4 + 2j, 5 + 1j]
+    assert white_b.move_to(3 + 5j, 1 + 7j)[2] == [2 + 6j, 1 + 7j]
 
-def test_22():
+
+def test_pawn_trajectory():
     assert white_p.move_to(2 + 2j, 2 + 4j)[2] == [2 + 3j, 2 + 4j]
-
-def test_23():
     assert black_p.move_to(2 + 7j, 2 + 6j)[2] == [2 + 6j]
 
-def test_24():
-    assert white_k.move_to(2 + 3j, 1+3j)[2] == [1 + 3j]
 
-def test_25():
+def test_king_trajectory():
+    assert white_k.move_to(2 + 3j, 1 + 3j)[2] == [1 + 3j]
     assert white_k.move_to(2 + 3j, 3 + 2j)[2] == [3 + 2j]
 
-def test_26():
-    assert white_q.move_to(1 + 1j, 6 + 6j)[2] == [2 + 2j, 3 + 3j, 4 + 4j, 5+ 5j, 6 + 6j]
 
-def test_27():
+def test_queen_trajectory():
+    assert white_q.move_to(1 + 1j, 6 + 6j)[2] == [2 + 2j, 3 + 3j, 4 + 4j, 5 + 5j, 6 + 6j]
     assert white_q.move_to(1 + 1j, 5 + 1j)[2] == [2 + 1j, 3 + 1j, 4 + 1j, 5 + 1j]
+    assert white_q.move_to(3 + 5j, 6 + 2j)[2] == [4 + 4j, 5 + 3j, 6 + 2j]
 
-def test_28():
-    assert white_q.move_to(3 + 5j,  6 + 2j)[2] == [4 + 4j, 5 + 3j, 6 + 2j]
 
-def test_29():
-    assert white_b.move_to(3 + 5j,  1 + 7j)[2] == [2 + 6j, 1 + 7j]
-
-def test_30():
+def test_knight_trajectory():
     assert white_n.get_trajectory(3 + 3j, 4 + 5j) == [3 + 4j, 3 + 5j, 4 + 5j]
-
-def test_31():
     assert white_n.get_trajectory(4 + 4j, 6 + 3j) == [5 + 4j, 6 + 4j, 6 + 3j]
-
-def test_32():
     assert white_n.get_trajectory(4 + 4j, 6 + 5j) == [5 + 4j, 6 + 4j, 6 + 5j]
-
-def test_33():
     assert white_n.get_trajectory(4 + 4j, 5 + 2j) == [4 + 3j, 4 + 2j, 5 + 2j]
-
-def test_34():
     assert white_n.get_trajectory(4 + 4j, 3 + 2j) == [4 + 3j, 4 + 2j, 3 + 2j]
-
-def test_35():
-    assert white_n.get_trajectory(4 + 4j, 2 + 3j) == [3  + 4j, 2 + 4j, 2 + 3j]
-
-def test_36():
+    assert white_n.get_trajectory(4 + 4j, 2 + 3j) == [3 + 4j, 2 + 4j, 2 + 3j]
     assert white_n.get_trajectory(4 + 4j, 2 + 5j) == [3 + 4j, 2 + 4j, 2 + 5j]
-
-def test_37():
     assert white_n.get_trajectory(4 + 4j, 3 + 6j) == [4 + 5j, 4 + 6j, 3 + 6j]
+
+
+def test_get_probable_move():
+    assert white_p.get_probable_attack_trajectory(2 + 2j) == [1 + 3j, 3 + 3j]
+    assert black_p.get_probable_attack_trajectory(2 + 7j) == [1 + 6j, 3 + 6j]
+    assert white_b.get_probable_attack_trajectory(1 + 1j) == [2 + 2j, 3 + 3j, 4 + 4j, 5 + 5j, 6 + 6j, 7 + 7j, 8 + 8j]
 
