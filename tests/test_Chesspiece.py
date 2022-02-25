@@ -100,7 +100,18 @@ def test_get_probable_move_pawns_and_bishops():
 
 def test_get_probable_move_knights():
     assert white_n.get_probable_attack_trajectory(2 + 1j, template) == {1 + 3j, 3 + 3j}
-    cb.move(2 + 1j, 3 + 3j)
     cb.move(8 + 7j, 8 + 6j)
-    cb.move(3 + 3j, 5 + 4j)
+    cb.move(2 + 1j, 3 + 3j)
+    cb.move(8 + 6j, 8 + 5j)
+    assert cb.move(3 + 3j, 5 + 4j)[0]
     assert white_n.get_probable_attack_trajectory(5 + 4j, template) == {3 + 3j, 7 + 3j, 7 + 5j,6 + 6j, 4 + 6j, 3 + 5j}
+
+def test_get_probable_moves_king():
+    assert cb.move(5 + 7j, 5 + 6j)[0]
+    assert cb.chess_board[5 + 6j] != None
+    cb.move(5 + 2j, 5 + 3j)
+    black_k = King(False)
+    assert cb.chess_board[5 + 7j] == None
+    assert black_k.get_probable_attack_trajectory(5 + 8j, template) == {5 + 7j}
+    cb.move(5 + 8j, 5 + 7j)
+    assert black_k.get_probable_attack_trajectory(5 + 7j, template) == {5 + 8j, 4 + 6j, 6 + 6j}
