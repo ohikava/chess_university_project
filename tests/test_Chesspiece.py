@@ -86,8 +86,8 @@ def test_knight_trajectory():
     assert white_n.get_trajectory(4 + 4j, 3 + 6j) == [4 + 5j, 4 + 6j, 3 + 6j]
 
 
+template = lambda x: (cb.chess_board.get(x), cb.chess_board.get(x).fraction if cb.chess_board.get(x) else None)
 def test_get_probable_move_pawns_and_bishops():
-    template = lambda x: (cb.chess_board.get(x), cb.chess_board.get(x).fraction if cb.chess_board.get(x) else None)
     assert white_p.get_probable_attack_trajectory(2 + 2j, template) == {1 + 3j, 3 + 3j}
     assert black_p.get_probable_attack_trajectory(2 + 7j, template) == {1 + 6j, 3 + 6j}
     cb.move(2 + 2j, 2  + 4j)
@@ -97,3 +97,10 @@ def test_get_probable_move_pawns_and_bishops():
     cb.move(1 + 7j, 1 + 6j)
     cb.move(2 + 2j, 5 + 5j)
     assert white_b.get_probable_attack_trajectory(5 + 5j, template) == {4 + 6j, 6 + 6j, 4 + 4j, 3 + 3j, 2 + 2j, 6 + 4j, 7 + 3j, 7 + 7j, 3 + 7j}
+
+def test_get_probable_move_knights():
+    assert white_n.get_probable_attack_trajectory(2 + 1j, template) == {1 + 3j, 3 + 3j}
+    cb.move(2 + 1j, 3 + 3j)
+    cb.move(8 + 7j, 8 + 6j)
+    cb.move(3 + 3j, 5 + 4j)
+    assert white_n.get_probable_attack_trajectory(5 + 4j, template) == {3 + 3j, 7 + 3j, 7 + 5j,6 + 6j, 4 + 6j, 3 + 5j}

@@ -75,6 +75,15 @@ class Chessboard:
 
 if __name__ == "__main__":
     cb = Chessboard()
-    cb.check_is_king_in_safe(1 + 1j, 1 + 2j)
-    cb.move(1 + 2j, 1 + 3j)
-    cb.check_is_king_in_safe(1 + 2j, 2 + 3j)
+    # cb.check_is_king_in_safe(1 + 1j, 1 + 2j)
+    # cb.move(1 + 2j, 1 + 3j)
+    # cb.check_is_king_in_safe(1 + 2j, 2 + 3j)
+    template = lambda x: (cb.chess_board.get(x), cb.chess_board.get(x).fraction if cb.chess_board.get(x) else None)
+    white_n = Knight(True)
+    cb = Chessboard()
+    cb.move(2 + 2j, 2  + 4j)
+    cb.move(2 + 7j, 2 + 5j)
+    cb.move(3 + 1j, 2 + 2j)
+    cb.move(1 + 7j, 1 + 6j)
+    cb.move(2 + 2j, 5 + 5j)
+    print(white_n.get_probable_attack_trajectory(2 + 1j, template))

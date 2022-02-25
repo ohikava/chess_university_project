@@ -3,7 +3,6 @@ from math import pi, sqrt, cos, sin
 from utilities import sign
 from typing import Callable
 
-
 class Chesspiece:
     def __init__(self, name, fraction):
         self.name = name
@@ -117,14 +116,17 @@ class Knight(Chesspiece):
     def __init__(self, fraction):
         super().__init__('n', fraction)
 
-    @staticmethod
-    def get_probable_attack_trajectory(position, is_cage_free=None):
+    def get_probable_attack_trajectory(self, position, is_cage_free=None):
         probable_attack_trajectory = set()
 
         for i in {complex(position.real + 1, position.imag + 2), complex(position.real + 2, position.imag + 1),
                   complex(position.real + 2, position.imag - 1), complex(position.real + 1, position.imag - 2),
                   complex(position.real - 1, position.imag - 2), complex(position.real - 2, position.imag - 1),
-                  complex(position.real - 2, position.imag + 1), complex(position.real + 2, position.imag - 1)}:
+                  complex(position.real - 2, position.imag + 1), complex(position.real - 1, position.imag + 2)}:
+            is_free = is_cage_free(i)
+            if is_free[0] and is_free[1] == self.fraction:
+                continue
+
             if 1 <= i.real <= 8 and 1 <= i.imag <= 8:
                 probable_attack_trajectory.add(i)
         return probable_attack_trajectory
@@ -292,4 +294,4 @@ class King(Chesspiece):
 
 if __name__ == "__main__":
     b = Bishop(True)
-    print(b.get_probable_attack_trajectory(3 + 3j, lambda x: True if x == 2 + 2j else False))
+
