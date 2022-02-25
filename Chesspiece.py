@@ -71,14 +71,22 @@ class Bishop(Chesspiece):
         super().__init__('b', fraction)
 
     def get_probable_attack_trajectory(self, position, is_cage_empty: Callable) -> []:
-        probable_attack_trajectory = []
+        probable_attack_trajectory = set()
         for i in {(1, -1), (-1, 1), (1, 1), (-1, -1)}:
             iter_position = position
             for _ in range(1, 9):
                 iter_position += complex(i[0], i[1])
+                is_empty = is_cage_empty(iter_position)
+
+                if is_empty[0] and is_empty[1] == self.fraction:
+                    break
+
                 if 1 <= iter_position.real <= 8 and 1 <= iter_position.imag <= 8:
-                    probable_attack_trajectory.append(iter_position)
-                if is_cage_empty(iter_position):
+                    probable_attack_trajectory.add(iter_position)
+                else:
+                    break
+
+                if is_empty[0]:
                     break
         return probable_attack_trajectory
 
