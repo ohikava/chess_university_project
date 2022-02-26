@@ -1,5 +1,5 @@
 from Chesspiece import Rook, Queen, Knight, King, Pawn, Bishop
-
+from utilities import complex_number_2_chess_notation
 
 class Chessboard:
     def __init__(self):
@@ -36,20 +36,17 @@ class Chessboard:
             if v and v.fraction == self.queue and v.name == 'k':
                 return k
 
-    # TODO method that checks is it possible to do a move without putting a king under a treat
-    def is_king_safe(self) -> bool:
+    def is_king_safe(self) -> (bool, complex):
         enemy_units = {i: v for (i, v) in self.chess_board.items() if v != None and v.fraction != self.queue}
         king_position = self.get_king_position()
         check_position = lambda x: (
         self.chess_board.get(x), self.chess_board.get(x).fraction if self.chess_board.get(x) else None)
 
-        print(king_position)
-        print(enemy_units)
 
         for k, v in enemy_units.items():
             if king_position in v.get_probable_attack_trajectory(k, check_position):
-                return False
-        return True
+                return False, k
+        return True, None
 
     def restart(self):
         self.__init__()
@@ -85,6 +82,8 @@ class Chessboard:
         self.current_move += 1
         self.queue = not self.queue
 
+        if not (check := self.is_king_safe())[0]:
+            return True, f'Шах от фигуры с позиции {complex_number_2_chess_notation(check[1])}'
         return True, 'Ход завершен'
 
 

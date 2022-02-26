@@ -34,12 +34,12 @@ def test_4():
 
 def test_is_king_safe():
     cb.restart()
-    assert cb.is_king_safe()
+    assert cb.is_king_safe()[0]
     cb.move(6 + 2j, 6 + 4j)
     cb.move(5 + 7j, 5 + 6j)
     cb.move(1 + 2j, 1 + 3j)
-    cb.move(4 + 8j, 8 + 4j)
-    assert not cb.is_king_safe()
+    assert cb.move(4 + 8j, 8 + 4j)[1] == 'Шах от фигуры с позиции h4'
+    assert not cb.is_king_safe()[0]
     cb.move(7 + 2j, 7 + 3j)
-    cb.move(1 + 7j, 1 + 6j)
-    assert cb.is_king_safe()
+    assert cb.move(1 + 7j, 1 + 6j)[1] == 'Ход завершен'
+    assert cb.is_king_safe()[0]
