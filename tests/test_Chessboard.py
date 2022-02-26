@@ -30,7 +30,6 @@ def test_4():
     cb.move(1 + 7j, 1 + 6j)
     assert cb.move(2 + 5j, 3 + 7j)[0]
     assert cb.chess_board[3 + 7j].name == 'n'
-    assert cb.move(3 + 8j, 8 + 3j)[0]
 
 def test_is_king_safe():
     cb.restart()
@@ -42,6 +41,7 @@ def test_is_king_safe():
     assert not cb.is_king_safe()[0]
     assert not cb.check_move(1 + 3j, 1 + 4j)
     assert cb.check_move(7 + 2j, 7 + 3j)
-    cb.move(7 + 2j, 7 + 3j)
+    assert cb.move(1 + 3j, 1 + 4j)[1] == "Вы не можете так ходить, пока вам стоит шах"
+    assert cb.move(7 + 2j, 7 + 3j)[0]
     assert cb.move(1 + 7j, 1 + 6j)[1] == 'Ход завершен'
     assert cb.is_king_safe()[0]

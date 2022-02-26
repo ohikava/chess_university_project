@@ -95,6 +95,9 @@ class Chessboard:
                 if self.chess_board[i].fraction == chesspiece.fraction:
                     return False, "Вы не можете аттаковать свою же фигуру"
 
+        if not self.is_king_safe()[0] and not self.check_move(old_position, new_position):
+            return False, "Вы не можете так ходить, пока вам стоит шах"
+
         self.chess_board[new_position] = chesspiece
         self.chess_board[old_position] = None
         self.current_move += 1
