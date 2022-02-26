@@ -1,6 +1,7 @@
 from Chesspiece import Rook, Queen, Knight, King, Pawn, Bishop
 from utilities import complex_number_2_chess_notation
 
+
 class Chessboard:
     def __init__(self):
         self.chess_board = {
@@ -40,13 +41,30 @@ class Chessboard:
         enemy_units = {i: v for (i, v) in self.chess_board.items() if v != None and v.fraction != self.queue}
         king_position = self.get_king_position()
         check_position = lambda x: (
-        self.chess_board.get(x), self.chess_board.get(x).fraction if self.chess_board.get(x) else None)
-
+            self.chess_board.get(x), self.chess_board.get(x).fraction if self.chess_board.get(x) else None)
 
         for k, v in enemy_units.items():
             if king_position in v.get_probable_attack_trajectory(k, check_position):
                 return False, k
         return True, None
+
+    def check_move(self, position, new_position) -> bool:
+        # True if you can make a move, False if not
+        result = True
+
+        old = self.chess_board[position]
+        new = self.chess_board[new_position]
+
+        self.chess_board[new_position] = self.chess_board[position]
+        self.chess_board[position] = None
+
+        if not self.is_king_safe()[0]:
+            result = False
+
+        self.chess_board[position] = old
+        self.chess_board[new_position] = new
+
+        return result
 
     def restart(self):
         self.__init__()

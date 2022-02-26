@@ -40,6 +40,8 @@ def test_is_king_safe():
     cb.move(1 + 2j, 1 + 3j)
     assert cb.move(4 + 8j, 8 + 4j)[1] == 'Шах от фигуры с позиции h4'
     assert not cb.is_king_safe()[0]
+    assert not cb.check_move(1 + 3j, 1 + 4j)
+    assert cb.check_move(7 + 2j, 7 + 3j)
     cb.move(7 + 2j, 7 + 3j)
     assert cb.move(1 + 7j, 1 + 6j)[1] == 'Ход завершен'
     assert cb.is_king_safe()[0]
