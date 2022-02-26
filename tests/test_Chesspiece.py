@@ -132,3 +132,17 @@ def test_get_probable_moves_queen():
     assert white_q.get_probable_attack_trajectory(7 + 7j, template) == {6 + 8j, 7 + 8j, 8 + 8j, 8 + 7j, 6 + 7j, 8 + 6j, \
                                                                         6 + 6j, 5 + 5j, 7 + 6j, 7 + 5j, \
                                                                         7 + 4j, 7 + 3j}
+
+def test_get_brobable_trajectory_rook():
+    cb.restart()
+    cb.move(1 + 2j, 1 + 4j)
+    assert white_r.get_probable_attack_trajectory(1 + 1j, template) == {1 + 2j, 1 + 3j}
+    cb.move(8 + 7j, 8 + 6j)
+    cb.move(1 + 1j, 1 + 3j)
+    assert white_r.get_probable_attack_trajectory(1 + 3j, template) == {1 + 2j, 1 + 1j, 2 + 3j, 3 + 3j, 4 + 3j, 5+3j, 6 + 3j,\
+                                                              7 + 3j, 8 + 3j}
+    cb.move(8 + 6j, 8 + 5j)
+    cb.move(1 + 3j, 8 + 3j)
+    assert white_r.get_probable_attack_trajectory(8 + 3j, template) == {1 + 3j, 2 + 3j, 3 + 3j, 4 + 3j, 5 + 3j, 6 + 3j, \
+                                                                        7 + 3j, 8 + 4j, 8 + 5j}
+
