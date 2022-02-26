@@ -3,6 +3,7 @@ from math import pi, sqrt, cos, sin
 from utilities import sign
 from typing import Callable
 
+
 class Chesspiece:
     def __init__(self, name, fraction):
         self.name = name
@@ -177,7 +178,7 @@ class Rook(Chesspiece):
         for i in {(1, 0), (-1, 0), (0, 1), (0, -1)}:
             iter_position = position
             for _ in range(1, 9):
-                iter_position += complex(i[0],i[1])
+                iter_position += complex(i[0], i[1])
 
                 is_free = is_cage_free(iter_position)
 
@@ -272,7 +273,7 @@ class King(Chesspiece):
     def __init__(self, fraction):
         super().__init__('k', fraction)
 
-    def get_probable_attack_trajectory(self, position, is_cage_free:Callable) -> set:
+    def get_probable_attack_trajectory(self, position, is_cage_free: Callable) -> set:
         probable_attack_trajectory = set()
 
         for i in {(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)}:
@@ -307,4 +308,3 @@ class King(Chesspiece):
 
 if __name__ == "__main__":
     b = Bishop(True)
-

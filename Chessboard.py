@@ -31,11 +31,25 @@ class Chessboard:
         self.current_move = 1
         self.queue = True
 
+    def get_king_position(self):
+        for k, v in self.chess_board.items():
+            if v and v.fraction == self.queue and v.name == 'k':
+                return k
+
     # TODO method that checks is it possible to do a move without putting a king under a treat
-    def check_is_king_in_safe(self, position, new_position) -> bool:
-        enemy_units = {i:v for (i, v) in self.chess_board.items() if v != None and v.fraction != self.queue}
+    def is_king_safe(self) -> bool:
+        enemy_units = {i: v for (i, v) in self.chess_board.items() if v != None and v.fraction != self.queue}
+        king_position = self.get_king_position()
+        check_position = lambda x: (
+        self.chess_board.get(x), self.chess_board.get(x).fraction if self.chess_board.get(x) else None)
+
+        print(king_position)
         print(enemy_units)
-        pass
+
+        for k, v in enemy_units.items():
+            if king_position in v.get_probable_attack_trajectory(k, check_position):
+                return False
+        return True
 
     def restart(self):
         self.__init__()
@@ -73,17 +87,16 @@ class Chessboard:
 
         return True, 'Ход завершен'
 
+
 if __name__ == "__main__":
     cb = Chessboard()
-    # cb.check_is_king_in_safe(1 + 1j, 1 + 2j)
-    # cb.move(1 + 2j, 1 + 3j)
-    # cb.check_is_king_in_safe(1 + 2j, 2 + 3j)
     template = lambda x: (cb.chess_board.get(x), cb.chess_board.get(x).fraction if cb.chess_board.get(x) else None)
     white_n = Knight(True)
     cb = Chessboard()
-    cb.move(2 + 2j, 2  + 4j)
+    cb.move(2 + 2j, 2 + 4j)
     cb.move(2 + 7j, 2 + 5j)
     cb.move(3 + 1j, 2 + 2j)
     cb.move(1 + 7j, 1 + 6j)
     cb.move(2 + 2j, 5 + 5j)
     print(white_n.get_probable_attack_trajectory(2 + 1j, template))
+    print(cb.is_king_safe())

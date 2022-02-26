@@ -31,3 +31,15 @@ def test_4():
     assert cb.move(2 + 5j, 3 + 7j)[0]
     assert cb.chess_board[3 + 7j].name == 'n'
     assert cb.move(3 + 8j, 8 + 3j)[0]
+
+def test_is_king_safe():
+    cb.restart()
+    assert cb.is_king_safe()
+    cb.move(6 + 2j, 6 + 4j)
+    cb.move(5 + 7j, 5 + 6j)
+    cb.move(1 + 2j, 1 + 3j)
+    cb.move(4 + 8j, 8 + 4j)
+    assert not cb.is_king_safe()
+    cb.move(7 + 2j, 7 + 3j)
+    cb.move(1 + 7j, 1 + 6j)
+    assert cb.is_king_safe()
