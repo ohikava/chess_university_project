@@ -218,19 +218,23 @@ class Queen(Chesspiece):
     def __init__(self, fraction):
         super().__init__('q', fraction)
 
-    @staticmethod
-    def get_probable_attack_trajectory(position, is_cage_free: Callable) -> set:
+    def get_probable_attack_trajectory(self, position, is_cage_free: Callable) -> set:
         probable_attack_trajectory = set()
         for i in {(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)}:
             iter_position = position
             for _ in range(1, 9):
-                iter_position += complex(position.real + i[0], position.imag + i[1])
+                iter_position += complex(i[0], i[1])
+                is_free = is_cage_free(iter_position)
+
+                if is_free[0] and is_free[1] == self.fraction:
+                    break
+
                 if 1 <= iter_position.real <= 8 and 1 <= iter_position.imag <= 8:
                     probable_attack_trajectory.add(iter_position)
                 else:
                     break
 
-                if is_cage_free(iter_position):
+                if is_free[0]:
                     break
         return probable_attack_trajectory
 

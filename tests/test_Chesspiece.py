@@ -115,3 +115,20 @@ def test_get_probable_moves_king():
     assert black_k.get_probable_attack_trajectory(5 + 8j, template) == {5 + 7j}
     cb.move(5 + 8j, 5 + 7j)
     assert black_k.get_probable_attack_trajectory(5 + 7j, template) == {5 + 8j, 4 + 6j, 6 + 6j}
+
+
+def test_get_probable_moves_queen():
+    cb.restart()
+    cb.move(5 + 2j, 5 + 4j)
+    assert cb.move(5 + 7j, 5 + 5j)[0]
+    cb.move(4 + 1j, 7 + 4j)
+    assert white_q.get_probable_attack_trajectory(7 + 4j, template) == {6 + 3j, 7 + 3j, 8 + 3j, 8 + 4j, 8 + 5j, 7 + 5j, \
+                                                                        7 + 6j, 7 + 7j, 6 + 5j,  5 + 2j, 4 + 1j, 5 + 6j,\
+                                                                        4 + 7j, 6 + 4j}
+    cb.move(1 + 7j, 1 + 6j)
+    assert cb.move(7 + 4j, 7 + 7j)[0]
+    assert not cb.chess_board[3 + 3j]
+    assert not cb.chess_board[4 + 4j]
+    assert white_q.get_probable_attack_trajectory(7 + 7j, template) == {6 + 8j, 7 + 8j, 8 + 8j, 8 + 7j, 6 + 7j, 8 + 6j, \
+                                                                        6 + 6j, 5 + 5j, 7 + 6j, 7 + 5j, \
+                                                                        7 + 4j, 7 + 3j}
