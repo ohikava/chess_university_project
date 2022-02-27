@@ -24,12 +24,14 @@ def test_3():
     assert not cb.chess_board[8 + 1j]
     assert cb.chess_board[8 + 3j].name == 'r' and cb.chess_board[8 + 3j].fraction
 
+
 def test_4():
     cb.move(4 + 7j, 4 + 6j)
     cb.move(3 + 3j, 2 + 5j)
     cb.move(1 + 7j, 1 + 6j)
     assert cb.move(2 + 5j, 3 + 7j)[0]
     assert cb.chess_board[3 + 7j].name == 'n'
+
 
 def test_is_king_safe():
     cb.restart()
@@ -45,3 +47,25 @@ def test_is_king_safe():
     assert cb.move(7 + 2j, 7 + 3j)[0]
     assert cb.move(1 + 7j, 1 + 6j)[1] == 'Ход завершен'
     assert cb.is_king_safe()[0]
+
+
+def test_check_checkmate_1():
+    cb.restart()
+    cb.move(7 + 2j, 7 + 4j)
+    cb.move(5 + 7j, 5 + 5j)
+    cb.move(6 + 2j, 6 + 3j)
+    cb.move(4 + 8j, 8 + 4j)
+    assert cb.check_checkmate()[0]
+    assert cb.check_checkmate()[1] == set()
+
+
+def test_check_checkmate_2():
+    cb.restart()
+    cb.move(6 + 2j, 6 + 3j)
+    cb.move(5 + 7j, 5  + 5j)
+    cb.move(1 + 2j, 1  +3j)
+    cb.move(4 + 8j, 8 + 4j)
+    assert not cb.is_king_safe()[0]
+    assert not cb.check_checkmate()[0]
+    assert cb.check_checkmate()[1] == {(7 + 2j, 7 + 3j)}
+

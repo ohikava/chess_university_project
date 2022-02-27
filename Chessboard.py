@@ -37,16 +37,33 @@ class Chessboard:
             if v and v.fraction == self.queue and v.name == 'k':
                 return k
 
+    def check_position(self, position):
+        chesspiece = self.chess_board.get(position)
+        return chesspiece, chesspiece.fraction if chesspiece else None
+
     def is_king_safe(self) -> (bool, complex):
         enemy_units = {i: v for (i, v) in self.chess_board.items() if v != None and v.fraction != self.queue}
         king_position = self.get_king_position()
-        check_position = lambda x: (
-            self.chess_board.get(x), self.chess_board.get(x).fraction if self.chess_board.get(x) else None)
 
         for k, v in enemy_units.items():
-            if king_position in v.get_probable_attack_trajectory(k, check_position):
+            if king_position in v.get_probable_attack_trajectory(k, self.check_position):
                 return False, k
         return True, None
+
+    def check_checkmate(self):
+        units = {i: v for (i, v) in self.chess_board.items() if v != None and v.fraction == self.queue}
+        possible_solutions = set()
+        for u_position, u in units.items():
+            possible_moves = u.get_probable_attack_trajectory(u_position, self.check_position)
+
+            if hasattr(u, 'get_probable_trajectory'):
+                possible_moves |= u.get_probable_trajectory(u_position, self.check_position, self.current_move)
+
+            for i in possible_moves:
+                if self.check_move(u_position, i):
+                    possible_solutions.add((u_position, i))
+
+        return False if len(possible_solutions) > 0 else True, possible_solutions
 
     def check_move(self, position, new_position) -> bool:
         # True if you can make a move, False if not
@@ -110,13 +127,4 @@ class Chessboard:
 
 if __name__ == "__main__":
     cb = Chessboard()
-    template = lambda x: (cb.chess_board.get(x), cb.chess_board.get(x).fraction if cb.chess_board.get(x) else None)
-    white_n = Knight(True)
-    cb = Chessboard()
-    cb.move(2 + 2j, 2 + 4j)
-    cb.move(2 + 7j, 2 + 5j)
-    cb.move(3 + 1j, 2 + 2j)
-    cb.move(1 + 7j, 1 + 6j)
-    cb.move(2 + 2j, 5 + 5j)
-    print(white_n.get_probable_attack_trajectory(2 + 1j, template))
-    print(cb.is_king_safe())
+    print(cb.check_checkmate())

@@ -17,11 +17,32 @@ class Pawn(Chesspiece):
     def __init__(self, fraction: bool):
         super().__init__('p', fraction)
 
-    def get_probable_attack_trajectory(self, position, is_cage_empty: None) -> set:
+    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> set:
         probable_moves = set()
         signature = 1 if self.fraction else -1
-        probable_moves.add(complex(position.real - 1, position.imag + signature))
-        probable_moves.add(complex(position.real + 1, position.imag + signature))
+        height = position.imag + signature
+
+        if not 1 <= height <= 8:
+            return probable_moves
+
+        if 1 <= (a := position.real + 1) <= 8 and is_cage_occupied((c := complex(a, height)))[0]:
+            probable_moves.add(c)
+
+        if 1 <= (a := position.real - 1) <= 8 and is_cage_occupied((c := complex(a, height)))[0]:
+            probable_moves.add(c)
+
+        return probable_moves
+
+    def get_probable_trajectory(self, position, is_cage_occupied: Callable, move=10) -> set:
+        is_first = move == 1
+        probable_moves = set()
+        signature = 1 if self.fraction else -1
+
+        if 1 <= (a := position.imag + signature) <= 8 and not is_cage_occupied((c := complex(position.real, a)))[0]:
+            probable_moves.add(c)
+
+        if is_first and 1 <= (a := position.imag + signature * 2) <= 8 and not is_cage_occupied((c := complex(position.real, a)))[0]:
+            probable_moves.add(c)
 
         return probable_moves
 
@@ -70,13 +91,13 @@ class Bishop(Chesspiece):
     def __init__(self, fraction):
         super().__init__('b', fraction)
 
-    def get_probable_attack_trajectory(self, position, is_cage_empty: Callable) -> []:
+    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> []:
         probable_attack_trajectory = set()
         for i in {(1, -1), (-1, 1), (1, 1), (-1, -1)}:
             iter_position = position
             for _ in range(1, 9):
                 iter_position += complex(i[0], i[1])
-                is_empty = is_cage_empty(iter_position)
+                is_empty = is_cage_occupied(iter_position)
 
                 if is_empty[0] and is_empty[1] == self.fraction:
                     break
@@ -117,14 +138,14 @@ class Knight(Chesspiece):
     def __init__(self, fraction):
         super().__init__('n', fraction)
 
-    def get_probable_attack_trajectory(self, position, is_cage_free=None):
+    def get_probable_attack_trajectory(self, position, is_cage_occupied=None):
         probable_attack_trajectory = set()
 
         for i in {complex(position.real + 1, position.imag + 2), complex(position.real + 2, position.imag + 1),
                   complex(position.real + 2, position.imag - 1), complex(position.real + 1, position.imag - 2),
                   complex(position.real - 1, position.imag - 2), complex(position.real - 2, position.imag - 1),
                   complex(position.real - 2, position.imag + 1), complex(position.real - 1, position.imag + 2)}:
-            is_free = is_cage_free(i)
+            is_free = is_cage_occupied(i)
             if is_free[0] and is_free[1] == self.fraction:
                 continue
 
@@ -172,7 +193,7 @@ class Rook(Chesspiece):
     def __init__(self, fraction):
         super().__init__('r', fraction)
 
-    def get_probable_attack_trajectory(self, position, is_cage_free: Callable) -> set:
+    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> set:
         probable_attack_trajectory = set()
 
         for i in {(1, 0), (-1, 0), (0, 1), (0, -1)}:
@@ -180,7 +201,7 @@ class Rook(Chesspiece):
             for _ in range(1, 9):
                 iter_position += complex(i[0], i[1])
 
-                is_free = is_cage_free(iter_position)
+                is_free = is_cage_occupied(iter_position)
 
                 if is_free[0] and is_free[1] == self.fraction:
                     break
@@ -224,13 +245,13 @@ class Queen(Chesspiece):
     def __init__(self, fraction):
         super().__init__('q', fraction)
 
-    def get_probable_attack_trajectory(self, position, is_cage_free: Callable) -> set:
+    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> set:
         probable_attack_trajectory = set()
         for i in {(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)}:
             iter_position = position
             for _ in range(1, 9):
                 iter_position += complex(i[0], i[1])
-                is_free = is_cage_free(iter_position)
+                is_free = is_cage_occupied(iter_position)
 
                 if is_free[0] and is_free[1] == self.fraction:
                     break
@@ -273,13 +294,13 @@ class King(Chesspiece):
     def __init__(self, fraction):
         super().__init__('k', fraction)
 
-    def get_probable_attack_trajectory(self, position, is_cage_free: Callable) -> set:
+    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> set:
         probable_attack_trajectory = set()
 
         for i in {(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)}:
             iter_position = complex(position.real + i[0], position.imag + i[1])
 
-            is_free = is_cage_free(iter_position)
+            is_free = is_cage_occupied(iter_position)
 
             if is_free[0] and is_free[1] == self.fraction:
                 continue

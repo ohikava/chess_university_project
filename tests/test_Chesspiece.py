@@ -88,8 +88,11 @@ def test_knight_trajectory():
 
 template = lambda x: (cb.chess_board.get(x), cb.chess_board.get(x).fraction if cb.chess_board.get(x) else None)
 def test_get_probable_move_pawns_and_bishops():
-    assert white_p.get_probable_attack_trajectory(2 + 2j, template) == {1 + 3j, 3 + 3j}
-    assert black_p.get_probable_attack_trajectory(2 + 7j, template) == {1 + 6j, 3 + 6j}
+    cb.move(4 + 2j, 4 + 4j)
+    cb.move(5 + 7j, 5 + 5j)
+    assert white_p.get_probable_attack_trajectory(4 + 4j, template) == {5 + 5j}
+    assert black_p.get_probable_attack_trajectory(5 + 5j, template) == {4 + 4j}
+    cb.restart()
     cb.move(2 + 2j, 2  + 4j)
     cb.move(2 + 7j, 2 + 5j)
     cb.move(3 + 1j, 2 + 2j)
