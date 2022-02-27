@@ -62,10 +62,20 @@ def test_check_checkmate_1():
 def test_check_checkmate_2():
     cb.restart()
     cb.move(6 + 2j, 6 + 3j)
-    cb.move(5 + 7j, 5  + 5j)
-    cb.move(1 + 2j, 1  +3j)
+    cb.move(5 + 7j, 5 + 5j)
+    cb.move(1 + 2j, 1 + 3j)
     cb.move(4 + 8j, 8 + 4j)
     assert not cb.is_king_safe()[0]
     assert not cb.check_checkmate()[0]
     assert cb.check_checkmate()[1] == {(7 + 2j, 7 + 3j)}
 
+
+def test_chessboard_with_checkmate():
+    cb.restart()
+    cb.move(5 + 2j, 5 + 4j)
+    cb.move(5 + 7j, 5 + 5j)
+    cb.move(6 + 1j, 3 + 4j)
+    cb.move(2 + 8j, 3 + 6j)
+    cb.move(4 + 1j, 8 + 5j)
+    cb.move(7 + 8j, 6 + 6j)
+    assert cb.move(8 + 5j, 6 + 7j)[1] == 'Игра завершена, Чёрным поставлен мат'

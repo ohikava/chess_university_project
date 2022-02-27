@@ -60,8 +60,9 @@ class Cli:
             if respond[0]:
                 os.system('cls')
                 self.render_chessboard()
-
             print(respond[1])
+            if respond[1].find('Игра завершена, ') != -1:
+                break
 
 
 if __name__ == "__main__":

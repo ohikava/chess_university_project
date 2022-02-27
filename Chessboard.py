@@ -121,7 +121,13 @@ class Chessboard:
         self.queue = not self.queue
 
         if not (check := self.is_king_safe())[0]:
+
+            checkmate = self.check_checkmate()
+            if checkmate[0]:
+                return True, f"Игра завершена, {'Белым поставлен мат' if self.queue else 'Чёрным поставлен мат'}"
+
             return True, f'Шах от фигуры с позиции {complex_number_2_chess_notation(check[1])}'
+
         return True, 'Ход завершен'
 
 
