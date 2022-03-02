@@ -65,6 +65,7 @@ def test_check_checkmate_2():
     cb.move(5 + 7j, 5 + 5j)
     cb.move(1 + 2j, 1 + 3j)
     cb.move(4 + 8j, 8 + 4j)
+
     assert not cb.is_king_safe()[0]
     assert not cb.check_checkmate()[0]
     assert cb.check_checkmate()[1] == {(7 + 2j, 7 + 3j)}

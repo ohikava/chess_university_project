@@ -6,8 +6,6 @@ from typing import Type
 class Saver:
     def __init__(self, cb: Type[Chessboard]):
         self.quick_saves = []
-        self.white_move = None
-        self.black_move = None
         self.name = uuid.uuid1()
         self.cb = cb
 
@@ -22,13 +20,7 @@ class Saver:
         pass
 
     def add(self, move: tuple[complex, complex]) -> None:
-        if not self.white_move:
-            self.white_move = move
-        else:
-            self.black_move = move
-            self.quick_saves.append((self.white_move, self.black_move))
-            self.white_move = None
-            self.black_move = None
+        self.quick_saves.append(move)
 
     """
     This method loads a file with full/short notation, translates it with Chessboard methods
@@ -42,10 +34,14 @@ class Saver:
     """
     This method uses a chessboard instance and loads quicksave to it
     """
+
     def load_quicksave(self) -> None:
-        pass
+        self.cb.restart()
+        for i in self.quick_saves:
+            self.cb.move(i[0], i[1])
 
     def back_one_move(self) -> None:
+        self.quick_saves.pop()
         self.quick_saves.pop()
         self.load_quicksave()
 

@@ -1,13 +1,15 @@
 from Chessboard import Chessboard
+from Saver import Saver
 from utilities import complex_number_2_chess_notation, chess_notation_2_complex_number
 import os
 
-
 check_move = {complex_number_2_chess_notation(i) + str(k) for i in range(1, 9) for k in range(1, 9)}
+
 
 class Cli:
     def __init__(self):
         self.chessboard = Chessboard()
+        self.saver = Saver(self.chessboard)
 
     def render_chessboard(self):
         print('  ', end=" ")
@@ -42,13 +44,22 @@ class Cli:
 
     def get_command(self):
         while True:
-            input_command = input("Введите команду в шахмотной нотации: ").split('--')
+            input_command = input("Введите команду в шахмотной нотации: ")
 
-            if len(input_command) <= 1:
+            if input_command == "Ход назад":
+                if self.chessboard.current_move < 3:
+                    print("Вы не можете вернуться назад на такой ранней стадии игры")
+                    continue
+                self.saver.back_one_move()
+                self.render_chessboard()
+                continue
+
+            input_command_chess = input_command.split('--')
+            if len(input_command_chess) <= 1:
                 print('Некорректная команда')
                 continue
 
-            first_position, second_position = input_command[0], input_command[1]
+            first_position, second_position = input_command_chess[0], input_command_chess[1]
 
             if first_position not in check_move or second_position not in check_move:
                 print("Некорректная команда")
@@ -59,6 +70,8 @@ class Cli:
 
             if respond[0]:
                 os.system('cls')
+                self.saver.add((chess_notation_2_complex_number(first_position),
+                                chess_notation_2_complex_number(second_position)))
                 self.render_chessboard()
             print(respond[1])
             if respond[1].find('Игра завершена, ') != -1:
