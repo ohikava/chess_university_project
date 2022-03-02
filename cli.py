@@ -70,9 +70,14 @@ class Cli:
 
             if respond[0]:
                 os.system('cls')
+                if respond[1] == 'Выберите желаемую фигуру':
+                    #Дописать
+                    pass
+
                 self.saver.add((chess_notation_2_complex_number(first_position),
                                 chess_notation_2_complex_number(second_position)))
                 self.render_chessboard()
+
             print(respond[1])
             if respond[1].find('Игра завершена, ') != -1:
                 break

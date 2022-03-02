@@ -33,15 +33,14 @@ class Pawn(Chesspiece):
 
         return probable_moves
 
-    def get_probable_trajectory(self, position, is_cage_occupied: Callable, move=10) -> set:
-        is_first = move == 1
+    def get_probable_trajectory(self, position, is_cage_occupied: Callable) -> set:
         probable_moves = set()
         signature = 1 if self.fraction else -1
 
         if 1 <= (a := position.imag + signature) <= 8 and not is_cage_occupied((c := complex(position.real, a)))[0]:
             probable_moves.add(c)
 
-        if is_first and 1 <= (a := position.imag + signature * 2) <= 8 and not is_cage_occupied((c := complex(position.real, a)))[0]:
+        if position.imag in {2, 7} and 1 <= (a := position.imag + signature * 2) <= 8 and not is_cage_occupied((c := complex(position.real, a)))[0]:
             probable_moves.add(c)
 
         return probable_moves
@@ -57,18 +56,17 @@ class Pawn(Chesspiece):
 
         return trajectory
 
-    def move_to(self, position: complex, new_position: complex, move=1) -> (bool, str, list):
-        first_move = True if move <= 2 else False
+    def move_to(self, position: complex, new_position: complex) -> (bool, str, list):
         position_difference = new_position - position
 
         trajectory = self.get_trajectory(position, new_position)
 
         if phase(position_difference) * 180 / pi == 90.0 and self.fraction and \
-                (abs(position_difference) == 1 or abs(position_difference) == 2 and first_move):
+                (abs(position_difference) == 1 or abs(position_difference) == 2 and position.imag == 2):
             return True, "", trajectory
 
         if phase(position_difference) * 180 / pi == -90.0 and not self.fraction and \
-                (abs(position_difference) == 1 or abs(position_difference) == 2 and first_move):
+                (abs(position_difference) == 1 or abs(position_difference) == 2 and position.imag == 7):
             return True, "", trajectory
 
         return False, "Данная фигура не может пойти в эту клетку", []
@@ -121,7 +119,7 @@ class Bishop(Chesspiece):
             trajectory.append(i)
         return trajectory
 
-    def move_to(self, position: complex, new_position: complex, move=1) -> (bool, str, list):
+    def move_to(self, position: complex, new_position: complex) -> (bool, str, list):
         position_difference = new_position - position
 
         if phase(position_difference) * 180 / pi in {45, 135, -45, -135}:
@@ -175,7 +173,7 @@ class Knight(Chesspiece):
 
         return trajectory
 
-    def move_to(self, position, new_position, move=1) -> (bool, str, list):
+    def move_to(self, position, new_position) -> (bool, str, list):
         position_difference = new_position - position
 
         if int(phase(position_difference) * 180 / pi) in {63, 26, -26, -63, -116, 116, 153, -153} \
@@ -227,7 +225,7 @@ class Rook(Chesspiece):
             trajectory.append(i)
         return trajectory
 
-    def move_to(self, position, new_position, move=1) -> (bool, str, list):
+    def move_to(self, position, new_position) -> (bool, str, list):
         position_difference = new_position - position
 
         if phase(position_difference) * 180 / pi in {0, 90, 180, -90, -180}:
@@ -276,7 +274,7 @@ class Queen(Chesspiece):
             trajectory.append(i)
         return trajectory
 
-    def move_to(self, position, new_position, move=1) -> (bool, str, list):
+    def move_to(self, position, new_position) -> (bool, str, list):
         position_difference = new_position - position
 
         if phase(position_difference) * 180 / pi in {0, 45, 90, 135, 180, -45, -90, -135, -180}:
@@ -314,7 +312,7 @@ class King(Chesspiece):
     def get_trajectory(position, new_position) -> list:
         return [new_position, ]
 
-    def move_to(self, position, new_position, move=1) -> (bool, str, list):
+    def move_to(self, position, new_position) -> (bool, str, list):
         position_difference = new_position - position
 
         if abs(position_difference) in {1, sqrt(2)}:

@@ -57,7 +57,7 @@ class Chessboard:
             possible_moves = u.get_probable_attack_trajectory(u_position, self.check_position)
 
             if hasattr(u, 'get_probable_trajectory'):
-                possible_moves |= u.get_probable_trajectory(u_position, self.check_position, self.current_move)
+                possible_moves |= u.get_probable_trajectory(u_position, self.check_position)
 
             for i in possible_moves:
                 if self.check_move(u_position, i):
@@ -98,7 +98,7 @@ class Chessboard:
         if self.chess_board[new_position]:
             figure_move = chesspiece.attack(old_position, new_position)
         else:
-            figure_move = chesspiece.move_to(old_position, new_position, self.current_move)
+            figure_move = chesspiece.move_to(old_position, new_position)
 
         if not figure_move[0]:
             return False, figure_move[1]
@@ -128,6 +128,8 @@ class Chessboard:
 
             return True, f'Шах от фигуры с позиции {complex_number_2_chess_notation(check[1])}'
 
+        if chesspiece.name == 'p' and new_position.imag in {1, 8}:
+            return True, "Выберите желаемую фигуру"
         return True, 'Ход завершен'
 
 

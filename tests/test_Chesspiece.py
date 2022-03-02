@@ -14,14 +14,14 @@ white_n = Knight(True)
 
 def test_white_p_moving():
     assert white_p.move_to(2 + 2j, 2 + 3j)[0]
-    assert white_p.move_to(2 + 2j, 2 + 4j, True)[0]
+    assert white_p.move_to(2 + 2j, 2 + 4j)[0]
     assert not white_p.move_to(2 + 2j, 2 + 1j)[0]
 
 
 def test_black_p_moving():
     assert black_p.move_to(2 + 7j, 2 + 6j)[0]
     assert black_p.move_to(3 + 6j, 3 + 5j)[0]
-    assert black_p.move_to(2 + 7j, 2 + 5j, True)[0]
+    assert black_p.move_to(2 + 7j, 2 + 5j)[0]
 
 
 def test_p_attacks():
