@@ -71,7 +71,8 @@ class Cli:
             if respond[0]:
                 os.system('cls')
                 if respond[1] == 'Выберите желаемую фигуру':
-                    #Дописать
+                    print(respond[1])
+                    favourite_chesspiece = input("Pawn, Rook, Bishop, Knight or Queen")
                     pass
 
                 self.saver.add((chess_notation_2_complex_number(first_position),

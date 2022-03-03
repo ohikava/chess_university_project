@@ -80,3 +80,17 @@ def test_chessboard_with_checkmate():
     cb.move(4 + 1j, 8 + 5j)
     cb.move(7 + 8j, 6 + 6j)
     assert cb.move(8 + 5j, 6 + 7j)[1] == 'Игра завершена, Чёрным поставлен мат'
+
+def test_update_pawn():
+    cb.restart()
+    assert cb.update_pawn(1 + 8j, 'Ферзь')[0]
+    assert cb.chess_board[1 + 8j].name == 'q'
+    assert not cb.chess_board[1 + 8j].fraction
+
+    cb.restart()
+    cb.move(1 + 2j, 1 + 3j)
+    assert cb.update_pawn(2 + 1j, 'Ладья')[0]
+    assert cb.chess_board[2 + 1j].name == 'r'
+    assert cb.chess_board[2 + 1j].fraction
+
+    assert not cb.update_pawn(2 + 3j, 'sdf')[0]

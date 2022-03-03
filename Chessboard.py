@@ -86,6 +86,26 @@ class Chessboard:
     def restart(self):
         self.__init__()
 
+    def update_pawn(self, position: complex, chesspiece: str) -> (bool, str):
+        match chesspiece:
+            case 'Пешка':
+                new_chesspiece = Pawn(not self.queue)
+            case 'Слон':
+                new_chesspiece = Bishop(not self.queue)
+            case 'Ладья':
+                new_chesspiece = Rook(not self.queue)
+            case 'Конь':
+                new_chesspiece = Knight(not self.queue)
+            case 'Ферзь':
+                new_chesspiece = Queen(not self.queue)
+            case 'Король':
+                return False, 'Вы не можете получить еще одного короля'
+            case _:
+                return False, 'Нет такой фигуры'
+
+        self.chess_board[position] = new_chesspiece
+        return True, ''
+
     def move(self, old_position, new_position) -> (bool, str):
         chesspiece = self.chess_board[old_position]
 
