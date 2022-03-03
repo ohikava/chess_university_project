@@ -1,7 +1,6 @@
 from Chesspiece import Rook, Queen, Knight, King, Pawn, Bishop
 from utilities import complex_number_2_chess_notation
 
-
 class Chessboard:
     def __init__(self):
         self.chess_board = {
@@ -91,6 +90,36 @@ class Chessboard:
     def restart(self):
         self.__init__()
 
+    def make_castling(self, position, new_position):
+
+        if not self.is_king_safe()[0]:
+            return False
+
+        iter_position = position
+        chesspiece = self.chess_board[position]
+
+        if self.chess_board[new_position + 1].name != 'r':
+            return False
+
+        while iter_position != new_position:
+            iter_position += 1
+            if self.chess_board[iter_position]:
+                return False
+
+            self.chess_board[iter_position] = chesspiece
+            self.chess_board[position] = None
+            if not self.is_king_safe()[0]:
+                self.chess_board[position] = chesspiece
+                self.chess_board[iter_position] = None
+                return False
+        self.chess_board[iter_position-1] = self.chess_board[iter_position+1]
+        self.chess_board[iter_position+1] = None
+        self.last_move = (position, new_position)
+        self.current_move += 1
+        self.queue = not self.queue
+
+        return True
+
     def update_pawn(self, position: complex, chesspiece: str) -> (bool, str):
         match chesspiece:
             case 'Пешка':
@@ -115,6 +144,9 @@ class Chessboard:
         if not self.last_move:
             return False
 
+        if not self.is_king_safe()[0]:
+            return False
+
         chesspiece = self.chess_board[position]
         last_old_position, last_new_position = self.last_move[0], self.last_move[1]
         attacked_chesspiece = self.chess_board[last_new_position]
@@ -125,6 +157,13 @@ class Chessboard:
             self.chess_board[last_new_position] = None
             self.chess_board[new_position] = self.chess_board[position]
             self.chess_board[position] = None
+
+            if not self.is_king_safe()[0]:
+                self.chess_board[position] = chesspiece
+                self.chess_board[new_position] = None
+                self.chess_board[last_new_position] = attacked_chesspiece
+                return False
+
             self.last_move = (position, new_position)
             self.current_move += 1
             self.queue = not self.queue
@@ -141,6 +180,9 @@ class Chessboard:
             return False, 'Вы не можете пойти чужой фигурой'
 
         if chesspiece.name == 'p' and self.make_en_passant(old_position, new_position):
+            return True, 'Ход завершен'
+
+        if chesspiece.name == 'k' and self.castling[self.queue] and self.make_castling(old_position, new_position):
             return True, 'Ход завершен'
 
         if self.chess_board[new_position]:

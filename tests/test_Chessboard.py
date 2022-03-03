@@ -136,3 +136,14 @@ def test_castling():
     assert cb.castling[False]
     cb.move(5 + 8j, 5 + 7j)
     assert not cb.castling[False]
+
+    cb.restart()
+    cb.move(7 + 2j, 7 + 4j)
+    cb.move(8 + 7j, 8 + 5j)
+    cb.move(6 + 1j, 7 + 2j)
+    cb.move(8 + 5j, 8 + 4j)
+    cb.move(7 + 1j, 8 + 3j)
+    cb.move(1 + 7j, 1 + 5j)
+    assert cb.move(5 + 1j, 7 + 1j)[0]
+    assert cb.chess_board[7 + 1j].name == 'k'
+    assert cb.chess_board[6 + 1j].name == 'r'
