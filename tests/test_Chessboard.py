@@ -94,3 +94,26 @@ def test_update_pawn():
     assert cb.chess_board[2 + 1j].fraction
 
     assert not cb.update_pawn(2 + 3j, 'sdf')[0]
+
+
+def test_make_an_passant():
+    cb.restart()
+    cb.move(2 + 2j, 2 + 4j)
+    cb.move(8 + 7j, 8 + 5j)
+    cb.move(2 + 4j, 2 + 5j)
+    cb.move(1 + 7j, 1 + 5j)
+    assert cb.make_en_passant(2 + 5j, 1 + 6j)
+    assert not cb.chess_board[1 + 5j]
+    assert cb.chess_board[1 + 6j]
+
+    cb.restart()
+
+    cb.move(4 + 2j, 4 + 4j)
+    cb.move(3 + 7j, 3 + 5j)
+    cb.move(4 + 4j, 4 + 5j)
+    cb.move(8 + 7j, 8 + 5j)
+    assert not cb.make_en_passant(4 + 5j, 3 + 6j)
+    cb.move(1 + 2j, 1 + 3j)
+    cb.move(5 + 7j, 5 + 5j)
+    assert cb.make_en_passant(4 + 5j, 5 + 6j)
+

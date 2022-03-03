@@ -31,6 +31,7 @@ class Chessboard:
 
         self.current_move = 1
         self.queue = True
+        self.last_move = None
 
     def get_king_position(self):
         for k, v in self.chess_board.items():
@@ -106,6 +107,23 @@ class Chessboard:
         self.chess_board[position] = new_chesspiece
         return True, ''
 
+    def make_en_passant(self, position, new_position):
+        chesspiece = self.chess_board[position]
+        last_old_position, last_new_position = self.last_move[0], self.last_move[1]
+        attacked_chesspiece = self.chess_board[last_new_position]
+        sign = 1 if attacked_chesspiece.fraction else -1
+        if attacked_chesspiece.name == 'p' and abs(last_new_position.imag - last_old_position.imag) == 2 \
+                and chesspiece.attack(position, new_position) \
+                and (last_new_position - complex(0, sign)) == new_position:
+            self.chess_board[last_new_position] = None
+            self.chess_board[new_position] = self.chess_board[position]
+            self.chess_board[position] = None
+            self.last_move = (position, new_position)
+            self.current_move += 1
+            self.queue = not self.queue
+            return True
+        return False
+
     def move(self, old_position, new_position) -> (bool, str):
         chesspiece = self.chess_board[old_position]
 
@@ -137,6 +155,7 @@ class Chessboard:
 
         self.chess_board[new_position] = chesspiece
         self.chess_board[old_position] = None
+        self.last_move = (old_position, new_position)
         self.current_move += 1
         self.queue = not self.queue
 
