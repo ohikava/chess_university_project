@@ -72,8 +72,12 @@ class Cli:
                 os.system('cls')
                 if respond[1] == 'Выберите желаемую фигуру':
                     print(respond[1])
-                    favourite_chesspiece = input("Pawn, Rook, Bishop, Knight or Queen")
-                    pass
+                    while True:
+                        favourite_chesspiece = input("Пешка, Ладья, Конь, Слон или Ферзь")
+                        if (respond := self.chessboard.update_pawn(chess_notation_2_complex_number(second_position),
+                                                                   favourite_chesspiece))[0]:
+                            break
+                        print(respond[1])
 
                 self.saver.add((chess_notation_2_complex_number(first_position),
                                 chess_notation_2_complex_number(second_position)))
