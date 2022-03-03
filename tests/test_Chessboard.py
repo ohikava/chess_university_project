@@ -117,3 +117,12 @@ def test_make_an_passant():
     cb.move(5 + 7j, 5 + 5j)
     assert cb.make_en_passant(4 + 5j, 5 + 6j)
 
+    cb.restart()
+    cb.move(4 + 2j, 4 + 4j)
+    cb.move(5 + 7j, 5 + 5j)
+    cb.move(4 + 4j, 4 + 5j)
+    cb.move(3 + 7j, 3 + 5j)
+    assert not cb.move(4 + 5j, 5 + 6j)[0]
+    assert cb.move(4 + 5j, 3 + 6j)[0]
+
+

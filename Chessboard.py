@@ -108,6 +108,9 @@ class Chessboard:
         return True, ''
 
     def make_en_passant(self, position, new_position):
+        if not self.last_move:
+            return False
+
         chesspiece = self.chess_board[position]
         last_old_position, last_new_position = self.last_move[0], self.last_move[1]
         attacked_chesspiece = self.chess_board[last_new_position]
@@ -132,6 +135,9 @@ class Chessboard:
 
         if self.queue != chesspiece.fraction:
             return False, 'Вы не можете пойти чужой фигурой'
+
+        if chesspiece.name == 'p' and self.make_en_passant(old_position, new_position):
+            return True, 'Ход завершен'
 
         if self.chess_board[new_position]:
             figure_move = chesspiece.attack(old_position, new_position)
