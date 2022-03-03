@@ -128,12 +128,11 @@ def test_make_an_passant():
 def test_castling():
     cb.restart()
     cb.move(1 + 2j, 1 + 4j)
-    assert all(cb.castling[True])
+    assert cb.castling[True]
     cb.move(5 + 7j, 5 + 5j)
-    assert all(cb.castling[False])
+    assert cb.castling[False]
     cb.move(1 + 1j, 1 + 2j)
-    assert any(cb.castling[True])
-    assert all(cb.castling[False])
-    assert not cb.castling[True][0]
+    assert cb.castling[True]
+    assert cb.castling[False]
     cb.move(5 + 8j, 5 + 7j)
-    assert not any(cb.castling[False])
+    assert not cb.castling[False]

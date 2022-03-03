@@ -33,8 +33,8 @@ class Chessboard:
         self.queue = True
         self.last_move = None
         self.castling = {
-            True: (True, True),
-            False: (True, True)
+            True: True,
+            False: True
         }
 
     def get_king_position(self):
@@ -163,12 +163,8 @@ class Chessboard:
         if not self.is_king_safe()[0] and not self.check_move(old_position, new_position):
             return False, "Вы не можете так ходить, пока вам стоит шах"
 
-        if any(self.castling[self.queue]):
-            if chesspiece.name == 'k':
-                self.castling[self.queue] = (False, False)
-            elif chesspiece.name == 'r':
-                self.castling[self.queue] = (False, self.castling[self.queue][1]) if old_position.real == 1 else \
-                    (self.castling[self.queue][0], False)
+        if chesspiece.name == 'k' or chesspiece.name == 'r' and old_position.real == 8:
+            self.castling[self.queue] = False
 
         self.chess_board[new_position] = chesspiece
         self.chess_board[old_position] = None
