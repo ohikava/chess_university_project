@@ -12,7 +12,7 @@ class Saver:
     """
     This method saves a current array quick_saves in separate file in folder saves/ with name from 
     variable self.name
-    before saving it also translates moves from my notation to full notation with Chessboard's method
+    before saving аit also translates moves from my notation to full notation with Chessboard's method
     to_full_notation.
     """
 
