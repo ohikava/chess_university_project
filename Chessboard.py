@@ -1,6 +1,7 @@
 from Chesspiece import Rook, Queen, Knight, King, Pawn, Bishop
 from utilities import complex_number_2_chess_notation
 
+
 class Chessboard:
     def __init__(self):
         self.chess_board = {
@@ -29,6 +30,7 @@ class Chessboard:
         self.chess_board[8 + 8j] = Rook(False)
 
         self.current_move = 1
+        #dsfs
         self.queue = True
         self.last_move = None
         self.castling = {
@@ -112,8 +114,8 @@ class Chessboard:
                 self.chess_board[position] = chesspiece
                 self.chess_board[iter_position] = None
                 return False
-        self.chess_board[iter_position-1] = self.chess_board[iter_position+1]
-        self.chess_board[iter_position+1] = None
+        self.chess_board[iter_position - 1] = self.chess_board[iter_position + 1]
+        self.chess_board[iter_position + 1] = None
         self.last_move = (position, new_position)
         self.current_move += 1
         self.queue = not self.queue
