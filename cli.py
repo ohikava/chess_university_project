@@ -3,15 +3,24 @@ from Saver import Saver
 from utilities import complex_number_2_chess_notation, chess_notation_2_complex_number
 import os
 
+"""
+Множество всех возможных позиций на шахматной доске
+"""
 check_move = {complex_number_2_chess_notation(i) + str(k) for i in range(1, 9) for k in range(1, 9)}
 
-
+"""
+Класс интерфейса шахмат
+В своей работе использует класс Chessboard, отвечающий за работу самой шахматной доски
+"""
 class Cli:
     def __init__(self):
         self.chessboard = Chessboard()
         self.saver = Saver(self.chessboard)
 
-    def render_chessboard(self):
+    """
+    Функция выводит шахматную доску в её текущем состоянии, Ничего не возвращает
+    """
+    def render_chessboard(self) -> None:
         print('  ', end=" ")
         for k in range(1, 9):
             print(complex_number_2_chess_notation(complex(k, 0)) + "", end=" ")
@@ -42,7 +51,11 @@ class Cli:
             print(complex_number_2_chess_notation(complex(k, 0)), end=" ")
         print("")
 
-    def get_command(self):
+    """
+    Функция, отвечающая за получение команд пользователя и правильное реагирование на них
+    При выполнении каждого хода, заново вызывает render_chessboard()
+    """
+    def get_command(self) -> None:
         while True:
             input_command = input("Введите команду в шахмотной нотации: ")
 

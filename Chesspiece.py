@@ -3,9 +3,13 @@ from math import pi, sqrt, cos, sin
 from utilities import sign
 from typing import Callable
 
+"""
+Класс реализующий общие своства шахматных фигур(Название фигуры и сторону)
+Также прегружает метод перевода в строку, нужно для вывода фигуры в консоли
+"""
 
 class Chesspiece:
-    def __init__(self, name, fraction):
+    def __init__(self, name: str, fraction: bool):
         self.name = name
         self.fraction = fraction
 
@@ -13,11 +17,17 @@ class Chesspiece:
         return self.name.upper() if self.fraction else self.name
 
 
+"""
+Класс пешки, наследует Chesspiece
+"""
 class Pawn(Chesspiece):
     def __init__(self, fraction: bool):
         super().__init__('p', fraction)
 
-    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> set:
+    """
+    Возвращает возможные ходы для атаки фигуры, без учета угрозы шаха
+    """
+    def get_probable_attack_trajectory(self, position: complex, is_cage_occupied: Callable) -> set:
         probable_moves = set()
         signature = 1 if self.fraction else -1
         height = position.imag + signature
@@ -33,7 +43,10 @@ class Pawn(Chesspiece):
 
         return probable_moves
 
-    def get_probable_trajectory(self, position, is_cage_occupied: Callable) -> set:
+    """
+    Возвращает возможные ходы для фигуры, без учета угрозы шаха
+    """
+    def get_probable_trajectory(self, position: complex, is_cage_occupied: Callable) -> set:
         probable_moves = set()
         signature = 1 if self.fraction else -1
 
@@ -45,8 +58,11 @@ class Pawn(Chesspiece):
 
         return probable_moves
 
+    """
+    Возвращает траекторию хода фигуры для определенной позиции
+    """
     @staticmethod
-    def get_trajectory(position, new_position) -> list:
+    def get_trajectory(position: complex, new_position: complex) -> list:
         position_difference = new_position - position
         trajectory = []
         i = position
@@ -56,6 +72,10 @@ class Pawn(Chesspiece):
 
         return trajectory
 
+    """
+    Метод проверяет может ли фигура пойти в данную клетку, без учета внешних факторов
+    Лишь смотрит на правила хода для данной фигуры
+    """
     def move_to(self, position: complex, new_position: complex) -> (bool, str, list):
         position_difference = new_position - position
 
@@ -72,7 +92,12 @@ class Pawn(Chesspiece):
 
         return False, "Данная фигура не может пойти в эту клетку", []
 
-    def attack(self, position, goal) -> (bool, str, list):
+    """
+    Метод проверяет может ли данная фигура атаковать фигуру в данной клетке
+    Так же как и предыдущий метод не делает проверки на шах и прочие внешние условия
+    Лишь проверку простейших шахматных правил для хода данной фигуры
+    """
+    def attack(self, position: complex, goal: complex) -> (bool, str, list):
         position_difference = goal - position
 
         if phase(position_difference) * 180 / pi in {45.0, 135.0} and self.fraction and abs(
@@ -86,11 +111,17 @@ class Pawn(Chesspiece):
         return False, 'Нельзя атаковать эту клетку', []
 
 
+"""
+Класс слона, наследует Chesspiece
+"""
 class Bishop(Chesspiece):
-    def __init__(self, fraction):
+    def __init__(self, fraction: bool):
         super().__init__('b', fraction)
 
-    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> []:
+    """
+    Возвращает возможные ходы для атаки фигуры, без учета угрозы шаха
+    """
+    def get_probable_attack_trajectory(self, position: complex, is_cage_occupied: Callable) -> []:
         probable_attack_trajectory = set()
         for i in {(1, -1), (-1, 1), (1, 1), (-1, -1)}:
             iter_position = position
@@ -110,8 +141,11 @@ class Bishop(Chesspiece):
                     break
         return probable_attack_trajectory
 
+    """
+    Возвращает траекторию хода фигуры для определенной позиции
+    """
     @staticmethod
-    def get_trajectory(position, new_position):
+    def get_trajectory(position: complex, new_position: complex) -> list:
         position_difference = new_position - position
         trajectory = []
         i = position
@@ -120,6 +154,10 @@ class Bishop(Chesspiece):
             trajectory.append(i)
         return trajectory
 
+    """
+    Метод проверяет может ли фигура пойти в данную клетку, без учета внешних факторов
+    Лишь смотрит на правила хода для данной фигуры
+    """
     def move_to(self, position: complex, new_position: complex) -> (bool, str, list):
         position_difference = new_position - position
 
@@ -129,15 +167,22 @@ class Bishop(Chesspiece):
 
         return False, "Данная фигура не может пойти в эту клетку", []
 
-    def attack(self, position, goal):
+    """
+    Метод вызывает move_to потому что траектория атаки у данной фигуры совпадает с траекторией обычного хода
+    """
+    def attack(self, position: complex, goal: complex) -> (bool, str, list):
         return self.move_to(position, goal)
 
-
+"""
+Класс коня, наследует Chesspiece
+"""
 class Knight(Chesspiece):
-    def __init__(self, fraction):
+    def __init__(self, fraction: bool):
         super().__init__('n', fraction)
-
-    def get_probable_attack_trajectory(self, position, is_cage_occupied=None):
+    """
+    Возвращает возможные ходы для атаки фигуры, без учета угрозы шаха
+    """
+    def get_probable_attack_trajectory(self, position: complex, is_cage_occupied=None):
         probable_attack_trajectory = set()
 
         for i in {complex(position.real + 1, position.imag + 2), complex(position.real + 2, position.imag + 1),
@@ -152,8 +197,11 @@ class Knight(Chesspiece):
                 probable_attack_trajectory.add(i)
         return probable_attack_trajectory
 
+    """
+    Возвращает траекторию хода фигуры для определенной позиции
+    """
     @staticmethod
-    def get_trajectory(position, new_position) -> list:
+    def get_trajectory(position: complex, new_position: complex) -> list:
         position_differenece = new_position - position
         angle = int(phase(position_differenece) * 180 / pi)
 
@@ -174,7 +222,11 @@ class Knight(Chesspiece):
 
         return trajectory
 
-    def move_to(self, position, new_position) -> (bool, str, list):
+    """
+    Метод проверяет может ли фигура пойти в данную клетку, без учета внешних факторов
+    Лишь смотрит на правила хода для данной фигуры
+    """
+    def move_to(self, position: complex, new_position: complex) -> (bool, str, list):
         position_difference = new_position - position
 
         if int(phase(position_difference) * 180 / pi) in {63, 26, -26, -63, -116, 116, 153, -153} \
@@ -184,15 +236,22 @@ class Knight(Chesspiece):
 
         return False, "Данная фигура не может пойти в эту клетку", []
 
-    def attack(self, position, goal):
+    """
+    Метод вызывает move_to потому что траектория атаки у данной фигуры совпадает с траекторией обычного хода
+    """
+    def attack(self, position: complex, goal: complex) -> (bool, str, list):
         return self.move_to(position, goal)
 
-
+"""
+Класс ладьи, наследует Chesspiece
+"""
 class Rook(Chesspiece):
-    def __init__(self, fraction):
+    def __init__(self, fraction: bool):
         super().__init__('r', fraction)
-
-    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> set:
+    """
+    Возвращает возможные ходы для атаки фигуры, без учета угрозы шаха
+    """
+    def get_probable_attack_trajectory(self, position: complex, is_cage_occupied: Callable) -> set:
         probable_attack_trajectory = set()
 
         for i in {(1, 0), (-1, 0), (0, 1), (0, -1)}:
@@ -215,8 +274,11 @@ class Rook(Chesspiece):
 
         return probable_attack_trajectory
 
+    """
+    Возвращает траекторию хода фигуры для определенной позиции
+    """
     @staticmethod
-    def get_trajectory(position, new_position):
+    def get_trajectory(position: complex, new_position: complex) -> list:
         position_difference = new_position - position
 
         trajectory = []
@@ -226,7 +288,11 @@ class Rook(Chesspiece):
             trajectory.append(i)
         return trajectory
 
-    def move_to(self, position, new_position) -> (bool, str, list):
+    """
+    Метод проверяет может ли фигура пойти в данную клетку, без учета внешних факторов
+    Лишь смотрит на правила хода для данной фигуры
+    """
+    def move_to(self, position: complex, new_position: complex) -> (bool, str, list):
         position_difference = new_position - position
 
         if phase(position_difference) * 180 / pi in {0, 90, 180, -90, -180}:
@@ -236,15 +302,22 @@ class Rook(Chesspiece):
 
         return False, "Данная фигура не может пойти в эту клетку", []
 
-    def attack(self, position, goal):
+    """
+    Метод вызывает move_to потому что траектория атаки у данной фигуры совпадает с траекторией обычного хода
+    """
+    def attack(self, position: complex, goal: complex) -> (bool, str, list):
         return self.move_to(position, goal)
 
-
+"""
+Класс ферзя, наследует Chesspiece
+"""
 class Queen(Chesspiece):
     def __init__(self, fraction):
         super().__init__('q', fraction)
-
-    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> set:
+    """
+    Возвращает возможные ходы для атаки фигуры, без учета угрозы шаха
+    """
+    def get_probable_attack_trajectory(self, position: complex, is_cage_occupied: Callable) -> set:
         probable_attack_trajectory = set()
         for i in {(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)}:
             iter_position = position
@@ -264,8 +337,11 @@ class Queen(Chesspiece):
                     break
         return probable_attack_trajectory
 
+    """
+    Возвращает траекторию хода фигуры для определенной позиции
+    """
     @staticmethod
-    def get_trajectory(position, new_position) -> list:
+    def get_trajectory(position: complex, new_position: complex) -> list:
         position_difference = new_position - position
 
         trajectory = []
@@ -275,7 +351,11 @@ class Queen(Chesspiece):
             trajectory.append(i)
         return trajectory
 
-    def move_to(self, position, new_position) -> (bool, str, list):
+    """
+    Метод проверяет может ли фигура пойти в данную клетку, без учета внешних факторов
+    Лишь смотрит на правила хода для данной фигуры
+    """
+    def move_to(self, position: complex, new_position: complex) -> (bool, str, list):
         position_difference = new_position - position
 
         if phase(position_difference) * 180 / pi in {0, 45, 90, 135, 180, -45, -90, -135, -180}:
@@ -285,15 +365,22 @@ class Queen(Chesspiece):
 
         return False, "Данная фигура не может пойти в эту клетку", []
 
-    def attack(self, position, new_goal):
+    """
+    Метод вызывает move_to потому что траектория атаки у данной фигуры совпадает с траекторией обычного хода
+    """
+    def attack(self, position: complex, new_goal: complex) -> (bool, str, list):
         return self.move_to(position, new_goal)
 
-
+"""
+Класс короля, наследует Chesspiece
+"""
 class King(Chesspiece):
-    def __init__(self, fraction):
+    def __init__(self, fraction: bool):
         super().__init__('k', fraction)
-
-    def get_probable_attack_trajectory(self, position, is_cage_occupied: Callable) -> set:
+    """
+    Возвращает возможные ходы для атаки фигуры, без учета угрозы шаха
+    """
+    def get_probable_attack_trajectory(self, position: complex, is_cage_occupied: Callable) -> set:
         probable_attack_trajectory = set()
 
         for i in {(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)}:
@@ -309,11 +396,18 @@ class King(Chesspiece):
 
         return probable_attack_trajectory
 
+    """
+    Возвращает траекторию хода фигуры для определенной позиции
+    """
     @staticmethod
-    def get_trajectory(position, new_position) -> list:
+    def get_trajectory(position: complex, new_position: complex) -> list:
         return [new_position, ]
 
-    def move_to(self, position, new_position) -> (bool, str, list):
+    """
+    Метод проверяет может ли фигура пойти в данную клетку, без учета внешних факторов
+    Лишь смотрит на правила хода для данной фигуры
+    """
+    def move_to(self, position: complex, new_position: complex) -> (bool, str, list):
         position_difference = new_position - position
 
         if abs(position_difference) in {1, sqrt(2)}:
@@ -322,7 +416,10 @@ class King(Chesspiece):
 
         return False, "Данная фигура не может пойти в эту клетку", []
 
-    def attack(self, position, goal):
+    """
+    Метод вызывает move_to потому что траектория атаки у данной фигуры совпадает с траекторией обычного хода
+    """
+    def attack(self, position: complex, goal: complex) -> (bool, str, list):
         return self.move_to(position, goal)
 
 

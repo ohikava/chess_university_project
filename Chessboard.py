@@ -1,7 +1,10 @@
 from Chesspiece import Rook, Queen, Knight, King, Pawn, Bishop
 from utilities import complex_number_2_chess_notation
 
-
+"""
+Этот класс отвечает за работу самих шахмот, за проведение ходов.
+В нём сосредоточенна сама логика шахмат
+"""
 class Chessboard:
     def __init__(self):
         self.chess_board = {
@@ -37,16 +40,27 @@ class Chessboard:
             True: True,
             False: True
         }
-
-    def get_king_position(self):
+    """
+    Возвращает позицию короля стороны, делающей текущий ход
+    """
+    def get_king_position(self) -> None:
         for k, v in self.chess_board.items():
             if v and v.fraction == self.queue and v.name == 'k':
                 return k
 
-    def check_position(self, position):
+    """
+    Получает определенную позицию и возвращает True если она занята фигурой и фракцию этой фигуры
+    Если клетка пуста возвращает None
+    """
+    def check_position(self, position: complex) -> (bool, bool):
         chesspiece = self.chess_board.get(position)
         return chesspiece, chesspiece.fraction if chesspiece else None
 
+    """
+    Проверяет находиться ли король под шахом
+    Если да, возвращает False и позицию с которой совершается шах
+    Если нет, возвращает True, None
+    """
     def is_king_safe(self) -> (bool, complex):
         enemy_units = {i: v for (i, v) in self.chess_board.items() if v != None and v.fraction != self.queue}
         king_position = self.get_king_position()
@@ -56,7 +70,14 @@ class Chessboard:
                 return False, k
         return True, None
 
-    def check_checkmate(self):
+    """
+    Функция проверяет поставлен ли мат королю текущей стороны
+    Данный метод перебирает все возможные ходы с текущими фигурами
+    И смотрит можно ли пойти так чтобы избавится от шаха,
+    Если находит такой ход возвращает False и множество с такими ходами
+    В противном случае True
+    """
+    def check_checkmate(self) -> (bool, set):
         units = {i: v for (i, v) in self.chess_board.items() if v != None and v.fraction == self.queue}
         possible_solutions = set()
         for u_position, u in units.items():
@@ -71,6 +92,15 @@ class Chessboard:
 
         return False if len(possible_solutions) > 0 else True, possible_solutions
 
+    """
+    Проверяет возжможен ход
+    Эта функция нужна чтобы фигуры не могли ходить, если их король под шахом и 
+    их ход не избавляет его от этого положения
+    Функция делает ход, вызывает метод is_king_safe
+    Если он возвращает True данный метод то же возвращает True
+    Если False, так же возвращает False
+    В любом случаее функция отменяет сделанный ход и не оказывает никакого влияния на позиции шахмат
+    """
     def check_move(self, position, new_position) -> bool:
         # True if you can make a move, False if not
         result = True
@@ -89,10 +119,17 @@ class Chessboard:
 
         return result
 
-    def restart(self):
+    """
+    Функция перезагружает шахмат и возвращает доску к изначальной позиции
+    """
+    def restart(self) -> None:
         self.__init__()
 
-    def make_castling(self, position, new_position):
+    """
+    Данная функция отвечает за возможность рокировки короля
+    Она делает все необходимые проверки и проводит ход
+    """
+    def make_castling(self, position: complex, new_position: complex) -> bool:
 
         if not self.is_king_safe()[0]:
             return False
@@ -122,6 +159,10 @@ class Chessboard:
 
         return True
 
+    """
+    Данная функция отвечает за возможность заменить пешку на любую фигуру в случае достижения 
+    ей крайней горизонтали
+    """
     def update_pawn(self, position: complex, chesspiece: str) -> (bool, str):
         match chesspiece:
             case 'Пешка':
@@ -142,7 +183,10 @@ class Chessboard:
         self.chess_board[position] = new_chesspiece
         return True, ''
 
-    def make_en_passant(self, position, new_position):
+    """
+    Данный метод отвечает за возможность "Взять на проходе" пешку противника своей пешкой
+    """
+    def make_en_passant(self, position: complex, new_position: complex) -> bool:
         if not self.last_move:
             return False
 
@@ -172,7 +216,12 @@ class Chessboard:
             return True
         return False
 
-    def move(self, old_position, new_position) -> (bool, str):
+    """
+    Главная функция класса, отвечает за совершение хода
+    Она обновляет текущий ход, увеличивает счетчик хода, изменяет шахматную доску
+    и возвращает сообщения об ошибках
+    """
+    def move(self, old_position:complex, new_position:complex) -> (bool, str):
         chesspiece = self.chess_board[old_position]
 
         if not chesspiece:

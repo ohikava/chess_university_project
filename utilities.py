@@ -1,5 +1,9 @@
 from math import copysign
 
+"""
+Словарь и кортеж нужны для работы функций chess_notation_2_complex_number, complex_number_2_chess_notation 
+соответсвенно
+"""
 notes_2_number = {
     "a": 1,
     "b": 2,
@@ -14,7 +18,10 @@ notes_2_number = {
 numbers_2_notes = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
 
 
-def chess_notation_2_complex_number(notation):
+"""
+Данная функция переводит шахматную алгебраическую нотацию в комплексное число
+"""
+def chess_notation_2_complex_number(notation:str) -> complex:
     note_letter, note_number = notation[0], notation[1]
 
     real_number_b = notes_2_number[note_letter]
@@ -22,13 +29,18 @@ def chess_notation_2_complex_number(notation):
 
     return complex(real_number_b, real_number_a)
 
-
-def complex_number_2_chess_notation(complex_number):
+"""
+Это работает наоборот, переводит комплексное в шахматную алгебраическую нотацию
+"""
+def complex_number_2_chess_notation(complex_number:complex) -> str:
     return numbers_2_notes[int(complex_number.real - 1)] + str(
         int(complex_number.imag)) if complex_number.imag != 0 else numbers_2_notes[int(complex_number.real - 1)]
 
-
-def sign(x):
+"""
+Эта функция возвращает знак переданного аргумента(в виде 1 или -1), но в отличие от copysign(1, x),
+в случае нуля, переданного в качестве аргумента, возвращает 0, а не 1
+"""
+def sign(x: int) -> int:
     return copysign(1, x) if x > 10**(-3)  or x < -10 ** (-3) else 0
 
 
