@@ -1,7 +1,6 @@
 from Chessboard import Chessboard
 from Saver import Saver
 from utilities import complex_number_2_chess_notation, chess_notation_2_complex_number
-import os
 
 """
 Множество всех возможных позиций на шахматной доске
@@ -82,7 +81,6 @@ class Cli:
                                            chess_notation_2_complex_number(second_position))
 
             if respond[0]:
-                os.system('cls')
                 if respond[1] == 'Выберите желаемую фигуру':
                     print(respond[1])
                     while True:
