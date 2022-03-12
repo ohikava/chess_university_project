@@ -98,8 +98,17 @@ class Cli:
             if respond[1].find('Игра завершена, ') != -1:
                 break
 
+    def show_file(self, name:str) -> None:
+        self.saver.load_file(name)
+
+        for raw_move in self.saver.loaded_file:
+            self.chessboard.move(*self.chessboard.short_notation_to_complex_numbers(raw_move))
+            self.render_chessboard()
+            print("\n \n")
+
 
 if __name__ == "__main__":
     new_cli = Cli()
-    new_cli.render_chessboard()
-    new_cli.get_command()
+    # new_cli.render_chessboard()
+    # new_cli.get_command()
+    new_cli.show_file('short_notations/test1.txt')

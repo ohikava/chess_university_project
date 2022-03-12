@@ -2,12 +2,12 @@ import uuid
 from Chessboard import Chessboard
 from typing import Type
 
-
 class Saver:
     def __init__(self, cb: Type[Chessboard]):
         self.quick_saves = []
         self.name = uuid.uuid1()
         self.cb = cb
+        self.loaded_file = []
 
     """
     This method saves a current array quick_saves in separate file in folder saves/ with name from 
@@ -29,7 +29,13 @@ class Saver:
     """
 
     def load_file(self, name: str) -> None:
-        pass
+        with open(name) as file:
+            while raw_string := file.readline():
+                i = raw_string.rstrip()
+                i = i.split()
+                self.loaded_file.append(i[1])
+                self.loaded_file.append(i[2])
+
 
     """
     This method uses a chessboard instance and loads quicksave to it
@@ -47,4 +53,6 @@ class Saver:
 
 
 if __name__ == "__main__":
-    s = Saver()
+    cb = Chessboard()
+    s = Saver(cb)
+    s.load_file('short_notations/test1.txt')

@@ -147,3 +147,36 @@ def test_castling():
     assert cb.move(5 + 1j, 7 + 1j)[0]
     assert cb.chess_board[7 + 1j].name == 'k'
     assert cb.chess_board[6 + 1j].name == 'r'
+
+def test_short_notation_to_complex_numbers():
+    cb.restart()
+    assert cb.find_chesspiece_by_name('p') == {1 + 2j, 2 + 2j, 3 + 2j, 4 + 2j, 5 + 2j, 6 + 2j, 7 + 2j, 8 + 2j}
+    assert cb.find_chesspiece_by_name('q') == {4 + 1j}
+    assert cb.find_chesspiece_by_name('n') == {2 + 1j, 7 + 1j}
+    cb.move(2 + 2j, 2 + 4j)
+    assert cb.find_chesspiece_by_name('k') == {5 + 8j}
+    assert cb.short_notation_to_complex_numbers('O-O') == (5 + 8j, 7 + 8j)
+    cb.move(3 + 7j, 3 + 5j)
+    assert cb.short_notation_to_complex_numbers('O-O') == (5 + 1j, 7 + 1j)
+    cb.restart()
+    assert cb.short_notation_to_complex_numbers('b4') == (2 + 2j, 2 + 4j)
+    cb.move(1 + 2j, 1 + 4j)
+    assert cb.short_notation_to_complex_numbers('Nh6') == (7 + 8j, 8 + 6j)
+    cb.restart()
+    cb.move(1 + 2j, 1 + 4j)
+    cb.move(2 + 8j, 1 + 6j)
+    cb.move(8 + 2j, 8 + 4j)
+    cb.move(1 + 6j, 3 + 5j)
+    cb.move(1 + 1j, 1 + 3j)
+    cb.move(3 + 5j, 2 + 3j)
+    cb.move(8 + 1j, 8 + 3j)
+    cb.move(7 + 7j, 7 + 6j)
+    assert cb.short_notation_to_complex_numbers('Rhxb3') == (8 + 3j, 2 + 3j)
+    assert cb.short_notation_to_complex_numbers('Raxb3') == (1 + 3j, 2 + 3j)
+    cb.restart()
+    cb.move(2 + 2j, 2 + 4j)
+    cb.move(3 + 7j, 3 + 5j)
+    cb.move(4 + 2j, 4 + 4j)
+    cb.move(8 + 7j, 8 + 6j)
+    assert cb.short_notation_to_complex_numbers('bxc5') == (2 + 4j, 3 + 5j)
+    assert cb.short_notation_to_complex_numbers('dxc5') == (4 + 4j, 3 + 5j)

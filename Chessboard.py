@@ -1,5 +1,5 @@
 from Chesspiece import Rook, Queen, Knight, King, Pawn, Bishop
-from utilities import complex_number_2_chess_notation
+from utilities import complex_number_2_chess_notation, chess_notation_2_complex_number
 
 """
 Этот класс отвечает за работу самих шахмот, за проведение ходов.
@@ -91,6 +91,61 @@ class Chessboard:
                     possible_solutions.add((u_position, i))
 
         return False if len(possible_solutions) > 0 else True, possible_solutions
+
+    """
+    Эта функция осуществляет поиск фигуры по имени и возвращает
+    множество с позициями фигур с таким именем у данной стороны
+    """
+    def find_chesspiece_by_name(self, name: str) -> {complex}:
+        units = {i: v for (i, v) in self.chess_board.items() if v != None and v.fraction == self.queue}
+        return {i for i in units if units[i].name == name}
+
+    """
+    Эта функция переводит короткую нотацию в кортеж из комплексных чисел
+    где первое число это изначальная позиция, а второе число позиция второго хода
+    """
+    def short_notation_to_complex_numbers(self, notation: str) -> (complex, complex):
+        # TODO сейчас тут не хватает функции поддержки смены фигуры пешки на любую другую при
+        #  ее наступлении на последнюю вертикаль
+        # TODO еще поддержка взятия на проходе здесь нужна
+        if notation == 'O-O':
+            horizontal = 1 if self.queue else 8
+            return complex(5, horizontal), complex(7, horizontal)
+
+        if notation[-1] == '+':
+            notation = notation[:-1]
+        if notation[0] not in {'K', 'Q', 'N', 'B', 'R'}:
+            notation = 'P' + notation
+
+        figures = self.find_chesspiece_by_name(notation[0].lower())
+
+        if len(figures) == 0:
+            return None, None
+
+
+        new_position = chess_notation_2_complex_number(notation[-2:])
+        kill = False
+        array_with_possible_chesspieces = []
+
+        if (kill_s := notation.find('x')) != -1:
+            notation = notation[:kill_s] + notation[kill_s+1:]
+            kill = True
+
+        for i in figures:
+            if (kill and self.chess_board[i].attack(i, new_position)[0]) or self.chess_board[i].move_to(i, new_position)[0]:
+                array_with_possible_chesspieces.append(i)
+
+        if len(array_with_possible_chesspieces) == 0:
+            return None, None
+
+        if len(array_with_possible_chesspieces) > 1:
+            add_horizontal = chess_notation_2_complex_number(notation[1])
+
+            return list(filter(lambda x: x.real == add_horizontal, array_with_possible_chesspieces))[0], new_position
+
+        return array_with_possible_chesspieces[0], new_position
+
+
 
     """
     Проверяет возжможен ход
@@ -280,4 +335,4 @@ class Chessboard:
 
 if __name__ == "__main__":
     cb = Chessboard()
-    print(cb.check_checkmate())
+    print(cb.short_notation_to_complex_numbers(''))

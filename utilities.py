@@ -22,6 +22,8 @@ numbers_2_notes = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
 Данная функция переводит шахматную алгебраическую нотацию в комплексное число
 """
 def chess_notation_2_complex_number(notation:str) -> complex:
+    if len(notation) < 2:
+        return notes_2_number[notation]
     note_letter, note_number = notation[0], notation[1]
 
     real_number_b = notes_2_number[note_letter]
