@@ -107,7 +107,6 @@ class Chessboard:
     def short_notation_to_complex_numbers(self, notation: str) -> (complex, complex):
         # TODO сейчас тут не хватает функции поддержки смены фигуры пешки на любую другую при
         #  ее наступлении на последнюю вертикаль
-        # TODO еще поддержка взятия на проходе здесь нужна
         if notation == 'O-O':
             horizontal = 1 if self.queue else 8
             return complex(5, horizontal), complex(7, horizontal)
@@ -237,6 +236,25 @@ class Chessboard:
 
         self.chess_board[position] = new_chesspiece
         return True, ''
+
+    def get_chesspieces_under_treatment(self) -> set:
+        enemies = {i: k for i in self.chess_board if (k := self.chess_board[i]) and k.fraction != self.queue}
+        my_units_under_treatment = set()
+
+        for u_position, u in enemies.items():
+            possible_moves = u.get_probable_attack_trajectory(u_position, self.check_position)
+
+            if hasattr(u, 'get_probable_trajectory'):
+                possible_moves |= u.get_probable_trajectory(u_position, self.check_position)
+
+            for index in possible_moves:
+                if (unit := self.chess_board[index]) and unit.fraction == self.queue:
+                    my_units_under_treatment.add(index)
+
+        return my_units_under_treatment
+
+
+
 
     """
     Данный метод отвечает за возможность "Взять на проходе" пешку противника своей пешкой

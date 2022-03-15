@@ -1,13 +1,14 @@
 from Chessboard import Chessboard
 from Saver import Saver
 from utilities import complex_number_2_chess_notation, chess_notation_2_complex_number
+from glob import glob
 
 """
 Множество всех возможных позиций на шахматной доске
 """
 check_move = {complex_number_2_chess_notation(i) + str(k) for i in range(1, 9) for k in range(1, 9)}
 
-"""
+""" 
 Класс интерфейса шахмат
 В своей работе использует класс Chessboard, отвечающий за работу самой шахматной доски
 """
@@ -15,6 +16,8 @@ class Cli:
     def __init__(self):
         self.chessboard = Chessboard()
         self.saver = Saver(self.chessboard)
+        self.state = 0
+        self.points = set()
 
     """
     Функция выводит шахматную доску в её текущем состоянии, Ничего не возвращает
@@ -29,7 +32,9 @@ class Cli:
             for i in range(8, 0, -1):
                 print(i, end="  ")
                 for k in range(1, 9):
-                    if self.chessboard.chess_board[complex(k, i)]:
+                    if complex(k, i) in self.points:
+                        print('x', end=" ")
+                    elif self.chessboard.chess_board[complex(k, i)]:
                         print(self.chessboard.chess_board[complex(k, i)], end=" ")
                     else:
                         print(".", end=" ")
@@ -39,7 +44,9 @@ class Cli:
             for i in range(1, 9):
                 print(i, end="  ")
                 for k in range(1, 9):
-                    if self.chessboard.chess_board[complex(k, i)]:
+                    if complex(k, i) in self.points:
+                        print('x', end=" ")
+                    elif self.chessboard.chess_board[complex(k, i)]:
                         print(self.chessboard.chess_board[complex(k, i)], end=" ")
                     else:
                         print(".", end=" ")
@@ -49,14 +56,42 @@ class Cli:
         for k in range(1, 9):
             print(complex_number_2_chess_notation(complex(k, 0)), end=" ")
         print("")
+        print('\n')
 
+    def game(self):
+        while True:
+            match self.state:
+                case 0:
+                    print('1. Новая Игра \n2. Загрузить игру')
+                    input_command = input('Введите номер желаемого пункта: ')
+
+                    match int(input_command):
+                        case 1:
+                            self.state = 3
+                        case 2:
+                            self.state = 1
+                case 1:
+                    print('\n')
+                    for index, i in enumerate(savings := self.saver.get_list_savings()):
+                        print(f'{index+1}. {i}')
+
+                    input_command = int(input('Введите номер желаемого пункта: '))
+                    self.saver.load_file(savings[input_command-1])
+                    self.state = 3
+                    self.chessboard.restart()
+                    self.saver.restart()
+
+                case 3:
+                    self.render_chessboard()
+                    self.get_command()
+                    self.state = 0
     """
     Функция, отвечающая за получение команд пользователя и правильное реагирование на них
     При выполнении каждого хода, заново вызывает render_chessboard()
     """
-    def get_command(self) -> None:
+    def game_controller(self) -> None:
         while True:
-            input_command = input("Введите команду в шахмотной нотации: ")
+            input_command = input("Введите позицию желаемой фигуры для хода или же одну из доступных комманд: ")
 
             if input_command == "Ход назад":
                 if self.chessboard.current_move < 3:
@@ -66,37 +101,80 @@ class Cli:
                 self.render_chessboard()
                 continue
 
-            input_command_chess = input_command.split('--')
-            if len(input_command_chess) <= 1:
-                print('Некорректная команда')
+            if input_command == "Фигуры под угрозой":
+                if not self.chessboard.is_king_safe()[0]:
+                    print('Вам поставлен шах')
+
+                for i in self.chessboard.get_chesspieces_under_treatment():
+                    self.points.add(i)
+                if len(self.points) > 0:
+                    self.render_chessboard()
+                    input()
+                    self.points = set()
+                    self.render_chessboard()
+
                 continue
 
-            first_position, second_position = input_command_chess[0], input_command_chess[1]
+            first_position = input_command
 
-            if first_position not in check_move or second_position not in check_move:
-                print("Некорректная команда")
+            if first_position not in check_move:
+                print('Некорректная позиция')
                 continue
 
-            respond = self.chessboard.move(chess_notation_2_complex_number(first_position),
-                                           chess_notation_2_complex_number(second_position))
 
-            if respond[0]:
-                if respond[1] == 'Выберите желаемую фигуру':
-                    print(respond[1])
-                    while True:
-                        favourite_chesspiece = input("Пешка, Ладья, Конь, Слон или Ферзь")
-                        if (respond := self.chessboard.update_pawn(chess_notation_2_complex_number(second_position),
-                                                                   favourite_chesspiece))[0]:
-                            break
+            if not (chesspiece := self.chessboard.chess_board[chess_notation_2_complex_number(first_position)]):
+                print('Клетка пуста')
+                continue
+
+            if chesspiece.fraction != self.chessboard.queue:
+                print('Вы не можете выбрать чужую фигуру')
+                continue
+
+            possible_moves = chesspiece.get_probable_attack_trajectory(chess_notation_2_complex_number(first_position), self.chessboard.check_position)
+
+            if hasattr(chesspiece, 'get_probable_trajectory'):
+                possible_moves |= chesspiece.get_probable_trajectory(chess_notation_2_complex_number(first_position), self.chessboard.check_position)
+
+            for i in possible_moves:
+                self.points.add(i)
+
+
+            self.render_chessboard()
+            while True:
+                second_position = input('Введите клетку для совершения хода: ')
+
+                if second_position == 'Отмена':
+                    break
+
+                if second_position not in check_move:
+                    print('Некорректная позиция')
+                    continue
+
+                respond = self.chessboard.move(chess_notation_2_complex_number(first_position),
+                                               chess_notation_2_complex_number(second_position))
+                if respond[0]:
+                    if respond[1] == 'Выберите желаемую фигуру':
                         print(respond[1])
+                        while True:
+                            favourite_chesspiece = input("Пешка, Ладья, Конь, Слон или Ферзь")
+                            if (respond := self.chessboard.update_pawn(chess_notation_2_complex_number(second_position),
+                                                                       favourite_chesspiece))[0]:
+                                break
+                            print(respond[1])
 
-                self.saver.add((chess_notation_2_complex_number(first_position),
-                                chess_notation_2_complex_number(second_position)))
-                self.render_chessboard()
+                    self.saver.add((chess_notation_2_complex_number(first_position),
+                                    chess_notation_2_complex_number(second_position)))
+                    print(respond[1])
+                    break
+                print(respond[1])
 
-            print(respond[1])
+            self.points = set()
+
+            self.render_chessboard()
+
             if respond[1].find('Игра завершена, ') != -1:
                 break
+
 
     def show_file(self, name:str) -> None:
         self.saver.load_file(name)
@@ -109,6 +187,7 @@ class Cli:
 
 if __name__ == "__main__":
     new_cli = Cli()
-    # new_cli.render_chessboard()
+    new_cli.render_chessboard()
     # new_cli.get_command()
-    new_cli.show_file('short_notations/test1.txt')
+    # new_cli.show_file('notations/test1.txt')
+    new_cli.game_controller()

@@ -79,7 +79,6 @@ class Pawn(Chesspiece):
     def move_to(self, position: complex, new_position: complex) -> (bool, str, list):
         position_difference = new_position - position
 
-
         if phase(position_difference) * 180 / pi == 90.0 and self.fraction and \
                 (abs(position_difference) == 1 or abs(position_difference) == 2 and position.imag == 2):
             trajectory = self.get_trajectory(position, new_position)
