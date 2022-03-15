@@ -136,7 +136,8 @@ class Cli:
                 possible_moves |= chesspiece.get_probable_trajectory(chess_notation_2_complex_number(first_position), self.chessboard.check_position)
 
             for i in possible_moves:
-                self.points.add(i)
+                if self.chessboard.check_move(chess_notation_2_complex_number(first_position), i):
+                    self.points.add(i)
 
 
             self.render_chessboard()
