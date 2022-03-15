@@ -16,7 +16,7 @@ class Cli:
     def __init__(self):
         self.chessboard = Chessboard()
         self.saver = Saver(self.chessboard)
-        self.state = 0
+        self.page = 0
         self.points = set()
 
     """
@@ -60,16 +60,16 @@ class Cli:
 
     def game(self):
         while True:
-            match self.state:
+            match self.page:
                 case 0:
                     print('1. Новая Игра \n2. Загрузить игру')
                     input_command = input('Введите номер желаемого пункта: ')
 
                     match int(input_command):
                         case 1:
-                            self.state = 3
+                            self.page = 3
                         case 2:
-                            self.state = 1
+                            self.page = 1
                 case 1:
                     print('\n')
                     for index, i in enumerate(savings := self.saver.get_list_savings()):
@@ -77,14 +77,32 @@ class Cli:
 
                     input_command = int(input('Введите номер желаемого пункта: '))
                     self.saver.load_file(savings[input_command-1])
-                    self.state = 3
-                    self.chessboard.restart()
-                    self.saver.restart()
+                    self.page = 3
 
                 case 3:
                     self.render_chessboard()
-                    self.get_command()
-                    self.state = 0
+                    self.game_controller()
+                    self.page = 0
+
+    def common_commands(self, command: str) -> int:
+        match command.lower():
+            case 'помощь' | 'help':
+                print("Ход назад - вернуть 1 ход назад\nФигуры под угрозой - обозначает через x ваши фигуры,\n"
+                      "Меню - вернуться в главное меню, РЕЗУЛЬТАТ ИГРЫ БУДЕТ ПОТЕРЯН, ЕСЛИ ВЫ НЕ СОХРАНИЛИ ЕГО В ФАЙЛ"
+                      "находящиеся под угрозой удара противника \nВам необходимо выбрать позицию фигуры для "
+                      "совершения хода, просто введите позицию на поле в виде 'a2'\nДалее вам нужно ввести желаемую "
+                      "клетку куда вы бы хотели переместить эту фигуру")
+                return 0
+            case 'меню' | 'в меню':
+                self.page = 0
+                self.saver.restart()
+                self.chessboard.restart()
+                return 1
+
+
+
+
+
     """
     Функция, отвечающая за получение команд пользователя и правильное реагирование на них
     При выполнении каждого хода, заново вызывает render_chessboard()
@@ -92,6 +110,12 @@ class Cli:
     def game_controller(self) -> None:
         while True:
             input_command = input("Введите позицию желаемой фигуры для хода или же одну из доступных комманд: ")
+
+            if (com_c := self.common_commands(input_command)) == 0:
+                continue
+
+            if com_c == 1:
+                break
 
             if input_command == "Ход назад":
                 if self.chessboard.current_move < 3:
@@ -188,7 +212,7 @@ class Cli:
 
 if __name__ == "__main__":
     new_cli = Cli()
-    new_cli.render_chessboard()
+    # new_cli.render_chessboard()
     # new_cli.get_command()
     # new_cli.show_file('notations/test1.txt')
-    new_cli.game_controller()
+    new_cli.game()
