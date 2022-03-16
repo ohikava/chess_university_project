@@ -8,7 +8,6 @@ class Saver:
         self.quick_saves = []
         self.name = uuid.uuid1()
         self.cb = cb
-        self.loaded_file = []
 
     def restart(self):
         self.__init__(self.cb)
@@ -34,11 +33,20 @@ class Saver:
 
     def load_file(self, name: str) -> None:
         with open(f"notations/{name}.txt") as file:
+            self.quick_saves = []
             while raw_string := file.readline():
-                i = raw_string.rstrip()
-                i = i.split()
-                self.loaded_file.append(i[1])
-                self.loaded_file.append(i[2])
+                try:
+                    i = raw_string.rstrip()
+                    i = i.split()
+                    self.quick_saves.append(self.cb.short_notation_to_complex_numbers(i[1]))
+                    self.cb.queue = not self.cb.queue
+                    self.quick_saves.append(self.cb.short_notation_to_complex_numbers(i[2]))
+                    self.cb.queue = not self.cb.queue
+                except:
+                    print(i[0])
+
+            self.name = name
+            self.cb.queue = True
 
 
     """

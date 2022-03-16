@@ -77,12 +77,60 @@ class Cli:
 
                     input_command = int(input('Введите номер желаемого пункта: '))
                     self.saver.load_file(savings[input_command-1])
-                    self.page = 3
+                    self.page = 4
 
                 case 3:
                     self.render_chessboard()
                     self.game_controller()
                     self.page = 0
+
+                case 4:
+                    index = 0
+                    while True:
+                        if self.page == 3:
+                            break
+
+                        i = self.saver.quick_saves[index]
+                        print(i)
+                        self.chessboard.move(i[0], i[1])
+                        self.render_chessboard()
+
+                        while True:
+                            input_command = input("Введите 'вперед' для следущего хода\n'Назад' для предыдущего\n'К игре' для "
+                                            "начала игры с этого места")
+
+                            if (com_c := self.common_commands(input_command)) == 0:
+                                continue
+
+                            if com_c == 1:
+                                break
+
+
+                            match input_command.lower():
+                                case 'вперед':
+                                    if index >= len(self.saver.quick_saves) - 1:
+                                        print('Следущего хода не существует')
+                                        break
+                                    index += 1
+                                    break
+                                case 'назад':
+                                    if index == 0:
+                                        print('Предыдущего хода не существует')
+                                        break
+                                    index -= 1
+                                    break
+                                case 'к игре':
+                                    if index >= len(self.saver.quick_saves) - 1:
+                                        print('Вы не можете начать игру с этого хода, она уже заверщилась!')
+                                        break
+                                    self.saver.quick_saves = self.saver.quick_saves[:index+1]
+                                    self.page = 3
+                                    break
+                                case _:
+                                    print('Нет такой комманды')
+                                    continue
+
+
 
     def common_commands(self, command: str) -> int:
         match command.lower():
