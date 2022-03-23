@@ -35,10 +35,10 @@ class Pawn(Chesspiece):
         if not 1 <= height <= 8:
             return probable_moves
 
-        if 1 <= (a := position.real + 1) <= 8 and is_cage_occupied((c := complex(a, height)))[0]:
+        if 1 <= (a := position.real + 1) <= 8 and (op := is_cage_occupied((c := complex(a, height))))[0] and op[1] != self.fraction:
             probable_moves.add(c)
 
-        if 1 <= (a := position.real - 1) <= 8 and is_cage_occupied((c := complex(a, height)))[0]:
+        if 1 <= (a := position.real - 1) <= 8 and (op := is_cage_occupied((c := complex(a, height))))[0] and  op[1] != self.fraction:
             probable_moves.add(c)
 
         return probable_moves

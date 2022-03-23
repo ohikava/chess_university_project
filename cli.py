@@ -1,7 +1,6 @@
 from Chessboard import Chessboard
 from Saver import Saver
 from utilities import complex_number_2_chess_notation, chess_notation_2_complex_number
-from glob import glob
 
 """
 Множество всех возможных позиций на шахматной доске
@@ -264,3 +263,11 @@ if __name__ == "__main__":
     # new_cli.get_command()
     # new_cli.show_file('notations/test1.txt')
     new_cli.game()
+
+    """
+    c2--c4 b7--b5 c4--c5 d7--d5 c5--d6 - взятие на проходе, сложное правило пешки
+    c2--c4 d7--d5 c4--c5 b7--b6 c5--b6 b8--c6 b6--b7 h7--h5 b7--b8 Ферзь - замена пешки любой фигурой, сложное правило пешки
+    g1--h3 a7--a5 e2--e4 a8--a6 f1--e2 a6--b6 e1--g1 - Рокировка
+    a2--a4 b7--b5 Ход назад - Ход назад(откат хода)
+    e2--e4 a7--a5 d1--h5 a8--a6 h5--f7 - Шах, в итоге король будет под шахом и единственные доступные ходы, лишь те которые его избавляют от этого
+    """
